@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  namespace: default
+data:
+  log_level: info
+  feature_flags: "beta-ui=on"
+  # Deliberately a bad practice (a real secret-shaped value sitting in
+  # a ConfigMap, which - unlike a Secret - is not itself encrypted at
+  # rest by convention) to prove the generic key-name redaction pass
+  # still catches it even though ConfigMap isn't the Kind-aware
+  # wholesale rule (that only applies to kind: Secret).
+  api_key: "abc123examplekey"

@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  # Deliberately a hardcoded, secret-shaped literal (not a
+  # ${{ secrets.X }} reference) to prove content-pattern redaction
+  # fires on a real fixture, not just a unit test.
+  AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+      - name: Run tests
+        run: echo "tests would run here"
