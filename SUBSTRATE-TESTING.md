@@ -107,6 +107,15 @@ collectors and controls are added.
 
 ## 5. Optional: exercise the live AWS collectors
 
+**Status: shelved 2026-09-18, not yet done.** Blocked on AWS account
+access - the account reachable from the existing sign-in sits inside
+an AWS Organization whose service control policy denies
+`s3:CreateBucket` (not fixable from that member account), and a
+fresh-account signup then hit a hard AWS Builder ID error requiring
+AWS Support. Tracked as open item 8 in `docs/REQUIREMENTS.md` section
+31. Revisit once a clean AWS account is available; the instructions
+below are otherwise unchanged and ready to run as-is.
+
 Not required for the static-only pass above. If you want to test
 `substrate collect` (FR-3) against real resources, this needs an AWS
 account and the AWS CLI configured with credentials - IAM is free at
