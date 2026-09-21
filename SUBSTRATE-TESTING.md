@@ -188,53 +188,69 @@ aws iam delete-user --user-name substrate-self-test-good
 aws iam delete-user --user-name substrate-self-test-bad
 ```
 
-## 6. Optional: exercise the Okta collectors (FR-3.9)
+## 6. Exercise the Okta collectors (FR-3.9)
 
-**Status: partially verified, 2026-09-21.** All four Okta collectors
-(MFA enrollment, session policy, provisioning/deprovisioning events,
-admin role assignments - `internal/frontend/collectors/okta`) are built,
-wired into `substrate collect`/`compile`, and covered by fixture-based
-unit tests. Beyond that, `cmd/substrate/okta_integration_test.go`'s
-`TestOktaEvidenceFlowsThroughRealCompile` drives the real
-`okta.TokenSource`/`RESTClient` HTTP path - private-key-JWT signing,
-token exchange, all four collection calls - against a fake Okta org
-(an `httptest.Server` implementing the same REST surface a real org
-exposes), then confirms a real `rego/ksi/iam` evaluation actually
-consumes the new evidence (an indicator's "missing controls" list
-measurably shrinks), not just that an IR node happens to exist. Run it
-with:
+**Status: fully verified against a live org, 2026-09-21.** All four
+Okta collectors (MFA enrollment, session policy, provisioning/
+deprovisioning events, admin role assignments -
+`internal/frontend/collectors/okta`) are built, wired into `substrate
+collect`/`compile`, covered by fixture-based unit tests, and now
+confirmed end to end against a real Okta Integrator Free Plan org: real
+evidence (the org's actual default MFA enrollment policy, session
+policy idle/lifetime settings, provisioning events, and admin role
+assignments) flowed through a real `substrate compile --runtime` run,
+tagged `"basis": "observed"`.
 
-```
-cd /Users/willkern/substrate
-go test ./cmd/substrate/... -run TestOktaEvidenceFlowsThroughRealCompile -v
-```
+Two setup steps beyond scopes are required and are easy to miss - both
+`docs/adr/0015` and `docs/okta-api-scopes.md` didn't originally mention
+either, and both were found only by actually doing this:
 
-**What's still not done: a real Okta org.** Unlike the fake server
-above, nothing has exercised this against an actual Okta tenant -
-mirroring AWS's own live leg (section 5), which is shelved for a
-different reason (account access). This one is shelved because no Okta
-developer org has been created yet, not because of a blocker - it's
-free and takes a few minutes at https://developer.okta.com/signup/.
-Once you have one:
+1. **DPoP.** A fresh API Services app enforces "Require Demonstrating
+   Proof of Possession (DPoP) header in token requests" by default
+   (app's **General** tab). `TokenSource` doesn't implement DPoP yet -
+   turn this off, or every token request fails with
+   `invalid_dpop_proof`.
+2. **Admin role assignment, separate from OAuth scopes.** Granting the
+   four scopes below is necessary but not sufficient: the access token
+   will correctly carry every granted scope, but
+   `GET /api/v1/policies` and `GET /api/v1/logs` still 403 with
+   `E0000006` until the app is ALSO assigned an actual Okta admin role.
+   On the app's own **Admin roles** tab, click **Edit assignments** and
+   assign **Read-Only Administrator** (not Org Admin - this is the
+   least-privilege choice, matching FR-3.7's "read-only always"
+   principle).
 
-1. In the Admin Console: **Applications → Applications → Create App
+Full setup, start to finish:
+
+1. Sign up at https://developer.okta.com/signup/ if you don't already
+   have an org - free, and requires a business-looking email domain
+   (personal providers like Gmail/Yahoo are rejected outright; a cheap
+   domain + free forwarding, e.g. Cloudflare Email Routing, works fine
+   if you don't have one).
+2. In the Admin Console: **Applications → Applications → Create App
    Integration → API Services**. Name it (e.g. "substrate collector").
-2. On the app's **General** tab, under **Client Credentials**, switch
-   from "Client secret" to **"Public key / Private key"** and generate
-   a key pair. Download the private key (PEM) - this is
-   `--okta-private-key`'s value, saved to a local file. Note the
-   **Client ID** and, if you generate more than one key, the **Key ID**.
-3. Grant exactly the scopes `docs/okta-api-scopes.md` documents
+3. On the app's **General** tab, under **Client Credentials**, switch
+   from "Client secret" to **"Public key / Private key"**, then
+   **Add key → Generate new key**. Save the private key shown -
+   Okta may show it as JWK JSON rather than PEM; either is fine to keep,
+   but `--okta-private-key` needs PEM (`-----BEGIN ... PRIVATE
+   KEY-----`) - convert JWK to PEM locally if that's what you got,
+   never by pasting the key into a chat session. Note the **Client ID**
+   on this same tab, and the **Key ID** if you generate more than one
+   key. Also on this tab: turn off the DPoP requirement (see above).
+4. Grant exactly the scopes `docs/okta-api-scopes.md` documents
    (`okta.policies.read`, `okta.logs.read`, `okta.users.read`,
    `okta.roles.read`) under the app's **Okta API Scopes** tab.
-4. Run collect against it, then merge into compile:
+5. Assign **Read-Only Administrator** under the app's **Admin roles**
+   tab (see above).
+6. Run collect against it, then merge into compile:
 
 ```
 cd /Users/willkern/substrate
 ./bin/substrate collect --out /tmp/self-test-okta-runtime \
   --okta-org-url https://<your-org>.okta.com \
-  --okta-client-id <client id from step 2> \
-  --okta-private-key /path/to/downloaded-key.pem \
+  --okta-client-id <client id from step 3> \
+  --okta-private-key /path/to/your-key.pem \
   --okta-key-id <key id, if you generated more than one>
 
 ./bin/substrate compile --source /Users/willkern/substrate-self-test \
@@ -246,6 +262,23 @@ cd /Users/willkern/substrate
 You should see the org's real MFA enrollment policy/policies under
 `IA-2` and session policy rule(s) under `AC-12`, each tagged
 `"source_type": "okta"` and `"basis": "observed"` in its provenance.
+
+**Note:** `substrate collect` unconditionally also attempts AWS
+collection (`collect.go`'s own doc comment explains why AWS is
+mandatory but Okta is optional) - if your AWS account has the same
+service-control-policy block section 5 hit, `collect` will fail on the
+AWS leg even though the Okta leg would have succeeded on its own. If
+that happens, either fix AWS access first (see section 5), or verify
+the Okta path alone by calling
+`oktacollectors.CollectMFAEnrollmentPolicies`/`CollectSessionPolicies`/
+`CollectProvisioningEvents`/`CollectAdminRoleAssignments` directly
+against a `RESTClient` built from your org's credentials, write their
+output to `okta_mfa.json`/`okta_session_policy.json`/
+`okta_provisioning.json`/`okta_admin_role.json` in a runtime directory
+(matching `collect.go`'s artifact names), and point `compile --runtime`
+at that directory - this is exactly how the 2026-09-21 verification
+above was actually done, since this environment's AWS account was
+blocked at the time.
 
 No cleanup needed - this is a read-only collector against your own org
 (FR-3.7's "read-only always" principle, applied to Okta the same way it
