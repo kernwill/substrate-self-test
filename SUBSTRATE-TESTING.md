@@ -188,6 +188,69 @@ aws iam delete-user --user-name substrate-self-test-good
 aws iam delete-user --user-name substrate-self-test-bad
 ```
 
+## 6. Optional: exercise the Okta collectors (FR-3.9)
+
+**Status: partially verified, 2026-09-21.** All four Okta collectors
+(MFA enrollment, session policy, provisioning/deprovisioning events,
+admin role assignments - `internal/frontend/collectors/okta`) are built,
+wired into `substrate collect`/`compile`, and covered by fixture-based
+unit tests. Beyond that, `cmd/substrate/okta_integration_test.go`'s
+`TestOktaEvidenceFlowsThroughRealCompile` drives the real
+`okta.TokenSource`/`RESTClient` HTTP path - private-key-JWT signing,
+token exchange, all four collection calls - against a fake Okta org
+(an `httptest.Server` implementing the same REST surface a real org
+exposes), then confirms a real `rego/ksi/iam` evaluation actually
+consumes the new evidence (an indicator's "missing controls" list
+measurably shrinks), not just that an IR node happens to exist. Run it
+with:
+
+```
+cd /Users/willkern/substrate
+go test ./cmd/substrate/... -run TestOktaEvidenceFlowsThroughRealCompile -v
+```
+
+**What's still not done: a real Okta org.** Unlike the fake server
+above, nothing has exercised this against an actual Okta tenant -
+mirroring AWS's own live leg (section 5), which is shelved for a
+different reason (account access). This one is shelved because no Okta
+developer org has been created yet, not because of a blocker - it's
+free and takes a few minutes at https://developer.okta.com/signup/.
+Once you have one:
+
+1. In the Admin Console: **Applications → Applications → Create App
+   Integration → API Services**. Name it (e.g. "substrate collector").
+2. On the app's **General** tab, under **Client Credentials**, switch
+   from "Client secret" to **"Public key / Private key"** and generate
+   a key pair. Download the private key (PEM) - this is
+   `--okta-private-key`'s value, saved to a local file. Note the
+   **Client ID** and, if you generate more than one key, the **Key ID**.
+3. Grant exactly the scopes `docs/okta-api-scopes.md` documents
+   (`okta.policies.read`, `okta.logs.read`, `okta.users.read`,
+   `okta.roles.read`) under the app's **Okta API Scopes** tab.
+4. Run collect against it, then merge into compile:
+
+```
+cd /Users/willkern/substrate
+./bin/substrate collect --out /tmp/self-test-okta-runtime \
+  --okta-org-url https://<your-org>.okta.com \
+  --okta-client-id <client id from step 2> \
+  --okta-private-key /path/to/downloaded-key.pem \
+  --okta-key-id <key id, if you generated more than one>
+
+./bin/substrate compile --source /Users/willkern/substrate-self-test \
+  --out /tmp/self-test-out-okta-runtime --runtime /tmp/self-test-okta-runtime
+./bin/substrate ir query --dir /tmp/self-test-out-okta-runtime/ir --control IA-2
+./bin/substrate ir query --dir /tmp/self-test-out-okta-runtime/ir --control AC-12
+```
+
+You should see the org's real MFA enrollment policy/policies under
+`IA-2` and session policy rule(s) under `AC-12`, each tagged
+`"source_type": "okta"` and `"basis": "observed"` in its provenance.
+
+No cleanup needed - this is a read-only collector against your own org
+(FR-3.7's "read-only always" principle, applied to Okta the same way it
+already applies to AWS); nothing it does creates or modifies anything.
+
 ## What this fixture can't show yet
 
 - No KSI indicator will ever read `satisfied` against this fixture,
@@ -195,9 +258,9 @@ aws iam delete-user --user-name substrate-self-test-bad
   still far short of what any indicator's full control list requires.
   This is the honest, current state of the product (see `docs/adr/0007`),
   not something wrong with the fixture.
-- 9 of the 10 KSI families have no Rego module at all yet, so their
-  indicators always read "not yet implemented" no matter what evidence
-  exists.
+- 7 of the 10 KSI families (all but SVC, IAM, and CNA) have no Rego
+  module at all yet, so their indicators always read "not yet
+  implemented" no matter what evidence exists.
 - `gate`'s regression detection is real and tested (see
   `cmd/substrate/gate_test.go`), but won't visibly fire against this
   fixture until enough coverage exists for at least one indicator to
