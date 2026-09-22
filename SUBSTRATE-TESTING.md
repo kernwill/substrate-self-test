@@ -107,14 +107,24 @@ collectors and controls are added.
 
 ## 5. Optional: exercise the live AWS collectors
 
-**Status: shelved 2026-09-18, not yet done.** Blocked on AWS account
-access - the account reachable from the existing sign-in sits inside
-an AWS Organization whose service control policy denies
+**Status: still shelved, re-confirmed 2026-09-22.** Blocked on AWS
+account access - the account reachable from the existing sign-in sits
+inside an AWS Organization whose service control policy denies
 `s3:CreateBucket` (not fixable from that member account), and a
 fresh-account signup then hit a hard AWS Builder ID error requiring
-AWS Support. Tracked as open item 8 in `docs/REQUIREMENTS.md` section
-31. Revisit once a clean AWS account is available; the instructions
-below are otherwise unchanged and ready to run as-is.
+AWS Support. Re-checked 2026-09-22 with a read-only
+`aws iam simulate-principal-policy --action-names s3:CreateBucket`
+against the current identity (`arn:aws:iam::034313911997:user/substrate-self-test`)
+rather than assumed unchanged from memory: still `explicitDeny`,
+`AllowedByOrganizations: false` - same SCP block, nothing resolved.
+Tracked as open item 8 in `docs/REQUIREMENTS.md` section 31. Revisit
+once a clean AWS account is available; the instructions below are
+otherwise unchanged and ready to run as-is.
+
+**Note:** `substrate collect` requires valid Okta flags on every
+invocation now (section 6 below, resolved item 12) - the AWS-focused
+command below uses `collect-okta.sh` for that reason, not because this
+section is really about Okta.
 
 Not required for the static-only pass above. If you want to test
 `substrate collect` (FR-3) against real resources, this needs an AWS
@@ -162,11 +172,14 @@ aws iam enable-mfa-device --user-name substrate-self-test-good \
   --authentication-code1 <first code> --authentication-code2 <next code>
 ```
 
-Then run collect, and merge it into a compile:
+Then run collect, and merge it into a compile. Okta flags are required
+too now (see section 6 for where the values come from):
 
 ```
+cd /Users/willkern/substrate-self-test
+source okta.env  # or export OKTA_ORG_URL/OKTA_CLIENT_ID/OKTA_PRIVATE_KEY yourself
+AWS_PROFILE=<your profile, if not default> ./collect-okta.sh --out /tmp/self-test-runtime
 cd /Users/willkern/substrate
-AWS_PROFILE=<your profile, if not default> ./bin/substrate collect --out /tmp/self-test-runtime
 ./bin/substrate compile --source /Users/willkern/substrate-self-test --out /tmp/self-test-out-runtime --runtime /tmp/self-test-runtime
 ./bin/substrate ir query --dir /tmp/self-test-out-runtime/ir --control AC-3
 ```
@@ -201,16 +214,14 @@ policy idle/lifetime settings, provisioning events, and admin role
 assignments) flowed through a real `substrate compile --runtime` run,
 tagged `"basis": "observed"`.
 
-Two setup steps beyond scopes are required and are easy to miss - both
+One extra setup step beyond scopes is required and easy to miss -
 `docs/adr/0015` and `docs/okta-api-scopes.md` didn't originally mention
-either, and both were found only by actually doing this:
+it, and it was found only by actually doing this. (A second one, DPoP,
+used to be required too - **resolved 2026-09-22**: `TokenSource` now
+implements RFC 9449 DPoP itself, so there's nothing to configure on the
+app's General tab either way; leave DPoP on or off, it works.)
 
-1. **DPoP.** A fresh API Services app enforces "Require Demonstrating
-   Proof of Possession (DPoP) header in token requests" by default
-   (app's **General** tab). `TokenSource` doesn't implement DPoP yet -
-   turn this off, or every token request fails with
-   `invalid_dpop_proof`.
-2. **Admin role assignment, separate from OAuth scopes.** Granting the
+1. **Admin role assignment, separate from OAuth scopes.** Granting the
    four scopes below is necessary but not sufficient: the access token
    will correctly carry every granted scope, but
    `GET /api/v1/policies` and `GET /api/v1/logs` still 403 with
@@ -237,7 +248,8 @@ Full setup, start to finish:
    KEY-----`) - convert JWK to PEM locally if that's what you got,
    never by pasting the key into a chat session. Note the **Client ID**
    on this same tab, and the **Key ID** if you generate more than one
-   key. Also on this tab: turn off the DPoP requirement (see above).
+   key. The DPoP toggle on this same tab can be left either way (see
+   above).
 4. Grant exactly the scopes `docs/okta-api-scopes.md` documents
    (`okta.policies.read`, `okta.logs.read`, `okta.users.read`,
    `okta.roles.read`) under the app's **Okta API Scopes** tab.
@@ -245,14 +257,19 @@ Full setup, start to finish:
    tab (see above).
 6. Run collect against it, then merge into compile:
 
-```
-cd /Users/willkern/substrate
-./bin/substrate collect --out /tmp/self-test-okta-runtime \
-  --okta-org-url https://<your-org>.okta.com \
-  --okta-client-id <client id from step 3> \
-  --okta-private-key /path/to/your-key.pem \
-  --okta-key-id <key id, if you generated more than one>
+`collect-okta.sh` (this repo) fills in the three Okta flags from
+environment variables, so they don't need retyping on every run now
+that they're required on every `substrate collect` call (item 12).
+Copy `okta.env.example` to `okta.env`, fill in the real values from
+steps 3-5 above, and it's gitignored so it never gets committed:
 
+```
+cd /Users/willkern/substrate-self-test
+cp okta.env.example okta.env   # fill in OKTA_ORG_URL/OKTA_CLIENT_ID/OKTA_PRIVATE_KEY
+source okta.env
+./collect-okta.sh --out /tmp/self-test-okta-runtime
+
+cd /Users/willkern/substrate
 ./bin/substrate compile --source /Users/willkern/substrate-self-test \
   --out /tmp/self-test-out-okta-runtime --runtime /tmp/self-test-okta-runtime
 ./bin/substrate ir query --dir /tmp/self-test-out-okta-runtime/ir --control IA-2
@@ -263,13 +280,15 @@ You should see the org's real MFA enrollment policy/policies under
 `IA-2` and session policy rule(s) under `AC-12`, each tagged
 `"source_type": "okta"` and `"basis": "observed"` in its provenance.
 
-**Note:** `substrate collect` unconditionally also attempts AWS
-collection (`collect.go`'s own doc comment explains why AWS is
-mandatory but Okta is optional) - if your AWS account has the same
-service-control-policy block section 5 hit, `collect` will fail on the
-AWS leg even though the Okta leg would have succeeded on its own. If
-that happens, either fix AWS access first (see section 5), or verify
-the Okta path alone by calling
+**Note - updated 2026-09-22, this got stricter.** AWS and Okta
+collection are now both mandatory (item 12, resolved) - `collect` runs
+them concurrently and fails the whole command if either leg errors, so
+a blocked AWS account (section 5's still-open item 8, re-confirmed
+still blocked 2026-09-22) means `collect`/`collect-okta.sh` cannot
+succeed at all right now, full stop, even with perfectly correct Okta
+credentials. There is no longer a way to get just the Okta artifacts
+out of the `collect` command while AWS is blocked. Either fix AWS
+access first (see section 5), or verify the Okta path alone by calling
 `oktacollectors.CollectMFAEnrollmentPolicies`/`CollectSessionPolicies`/
 `CollectProvisioningEvents`/`CollectAdminRoleAssignments` directly
 against a `RESTClient` built from your org's credentials, write their

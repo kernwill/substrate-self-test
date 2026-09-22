@@ -1,0 +1,3 @@
+okta.env
+*.pem
+*.key
