@@ -1,0 +1,21 @@
+# The assessment boundary for the substrate self-test environment: the
+# set of information resources that is the cloud service offering
+# (CR26 MAS-CSO-IIR). This is the provider's declaration - substrate
+# checks it against what it collects, but cannot prove it complete.
+owner: Will Kern, CEO
+declared_on: 2026-10-06
+components:
+  # The one AWS account, and the only Region its free plan allows.
+  - type: aws
+    account: "034313911997"
+    regions: [us-east-2]
+  # The Okta org that holds the offering's workforce identities.
+  - type: okta
+    org: https://integrator-2677113.okta.com
+  # This repository: the offering's infrastructure code and CI.
+  - type: github
+    repository: kernwill/substrate-self-test
+  # The Kubernetes workloads described by the manifests in k8s/.
+  - type: kubernetes
+    name: self-test
+    manifests: k8s
