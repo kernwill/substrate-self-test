@@ -8,7 +8,16 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  # The account's free plan allows only its selected Region (us-east-2).
+  region = "us-east-2"
+}
+
+data "aws_caller_identity" "current" {}
+
+locals {
+  # S3 bucket names are global across all accounts; the account ID keeps
+  # these unique.
+  suffix = data.aws_caller_identity.current.account_id
 }
 
 # --- app_data: fully configured. Every control substrate currently
@@ -19,7 +28,7 @@ provider "aws" {
 # fix is picked up). ---
 
 resource "aws_s3_bucket" "app_data" {
-  bucket = "substrate-self-test-app-data"
+  bucket = "substrate-self-test-app-data-${local.suffix}"
 }
 
 resource "aws_s3_bucket_versioning" "app_data" {
@@ -53,7 +62,7 @@ resource "aws_s3_bucket_public_access_block" "app_data" {
 # a second, independent target for later self-testing. ---
 
 resource "aws_s3_bucket" "app_logs" {
-  bucket = "substrate-self-test-app-logs"
+  bucket = "substrate-self-test-app-logs-${local.suffix}"
 }
 
 resource "aws_s3_bucket_public_access_block" "app_logs" {

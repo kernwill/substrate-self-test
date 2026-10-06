@@ -1,3 +1,10 @@
 okta.env
 *.pem
 *.key
+
+# Terraform working files and state (never commit state)
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl.bak
+crash.log
