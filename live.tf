@@ -234,3 +234,48 @@ resource "aws_ebs_volume" "encrypted" {
   encrypted         = true
   tags              = { Name = "substrate-self-test-encrypted" }
 }
+
+# --- cp-9.8 and cp-10.2: one small encrypted PostgreSQL instance with
+# automated backups, so the RDS collector has a real database to read.
+# It holds no data. Not reachable from anywhere: no public address and a
+# security group with no rules. AWS generates the master password and
+# keeps it in Secrets Manager, so it is never in Terraform state.
+# No cross-Region copy yet (the free plan allows only us-east-2), so
+# substrate correctly reports cp-6, cp-6.1, cp-7 and cp-7.1 as not
+# satisfied until one exists. ---
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+resource "aws_db_subnet_group" "app" {
+  name       = "substrate-self-test"
+  subnet_ids = data.aws_subnets.default.ids
+}
+
+resource "aws_security_group" "db" {
+  name        = "substrate-self-test-db"
+  description = "No inbound or outbound rules: nothing can reach the database"
+  vpc_id      = data.aws_vpc.default.id
+}
+
+resource "aws_db_instance" "app" {
+  identifier                  = "substrate-self-test"
+  engine                      = "postgres"
+  engine_version              = "16"
+  instance_class              = "db.t4g.micro"
+  allocated_storage           = 20
+  storage_type                = "gp3"
+  storage_encrypted           = true
+  kms_key_id                  = aws_kms_key.app.arn
+  username                    = "substrate"
+  manage_master_user_password = true
+  db_subnet_group_name        = aws_db_subnet_group.app.name
+  vpc_security_group_ids      = [aws_security_group.db.id]
+  publicly_accessible         = false
+  backup_retention_period     = 7
+  skip_final_snapshot         = true
+  deletion_protection         = false
+}
