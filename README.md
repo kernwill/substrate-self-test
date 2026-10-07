@@ -19,6 +19,13 @@ See `SUBSTRATE-TESTING.md` for exact instructions on how to run
 - `live.tf` - the rest of the live test environment (audit bucket,
   CloudTrail, KMS key, AWS Config, Resolver DNSSEC), applied in us-east-2.
 - `substrate-boundary.yaml` - the declared assessment boundary.
+- `substrate-readonly-policy.json` - a copy of substrate's published
+  read-only AWS policy, held by the `substrate-collector` role in
+  `live.tf`.
+- `docs/policies/` - policy documents for substrate's artifact tier,
+  approved through pull requests.
+- `.github/workflows/policy-review-reminder.yml` - opens an issue when
+  the policies are due for their quarterly review.
 - `k8s/deployment.yaml` - a Deployment with a well-configured pod and
   container `securityContext`.
 - `k8s/networkpolicy.yaml` - an explicit default-deny NetworkPolicy
