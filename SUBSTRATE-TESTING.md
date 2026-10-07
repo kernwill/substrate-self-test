@@ -42,8 +42,9 @@ can't show yet" section below.
 ./bin/substrate ir query --dir /tmp/self-test-out/ir --control AC-6
 ```
 
-You should see: `app_data`'s public-access-block evidence (all four
-flags `true`) next to `app_logs`'s (all four `false`) under `AC-3`;
+You should see: `app_data`'s and `app_logs`'s public-access-block
+evidence (all four flags `true`) under `AC-3` (`app_logs` is the
+regression target - see main.tf's comment for how to break it on purpose);
 `app_data`'s KMS encryption under `SC-28.1`; the Deployment's pod and
 container security contexts under `CM-7`; the NetworkPolicy's
 default-deny under `SC-7.5`; and the workflow's `permissions` block

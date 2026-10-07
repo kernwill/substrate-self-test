@@ -13,9 +13,12 @@ See `SUBSTRATE-TESTING.md` for exact instructions on how to run
 ## Layout
 
 - `main.tf` - two S3 buckets: `app_data` (fully configured: versioning,
-  KMS encryption, all four public-access-block flags on) and
-  `app_logs` (deliberately under-configured: no versioning or
-  encryption resource, public access block flags all off).
+  KMS encryption, all four public-access-block flags on, TLS-only) and
+  `app_logs` (the regression target: public access blocked and TLS-only
+  by default; its comment explains how to break it on purpose and revert).
+- `live.tf` - the rest of the live test environment (audit bucket,
+  CloudTrail, KMS key, AWS Config, Resolver DNSSEC), applied in us-east-2.
+- `substrate-boundary.yaml` - the declared assessment boundary.
 - `k8s/deployment.yaml` - a Deployment with a well-configured pod and
   container `securityContext`.
 - `k8s/networkpolicy.yaml` - an explicit default-deny NetworkPolicy

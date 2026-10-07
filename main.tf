@@ -55,11 +55,13 @@ resource "aws_s3_bucket_public_access_block" "app_data" {
   restrict_public_buckets = true
 }
 
-# --- app_logs: deliberately under-configured. No versioning
-# resource, no encryption resource, and a public access block that
-# leaves every flag open. This is real "not_satisfied"-shaped raw
-# evidence for AC-3 (once a backend predicate exists to judge it) and
-# a second, independent target for later self-testing. ---
+# --- app_logs: the regression target. Configured well by default. To
+# test that compile + gate catch a regression, set the four
+# public-access-block flags below to false and remove the
+# DenyInsecureTransport statement, apply, compile, gate; then revert.
+# Plain literals on purpose: substrate's static parser doesn't evaluate
+# conditionals over variables (it records them unresolved), so a
+# variable "switch" would lose the static evidence. ---
 
 resource "aws_s3_bucket" "app_logs" {
   bucket = "substrate-self-test-app-logs-${local.suffix}"
@@ -67,8 +69,24 @@ resource "aws_s3_bucket" "app_logs" {
 
 resource "aws_s3_bucket_public_access_block" "app_logs" {
   bucket                  = aws_s3_bucket.app_logs.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_policy" "app_logs" {
+  bucket = aws_s3_bucket.app_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid       = "DenyInsecureTransport"
+      Effect    = "Deny"
+      Principal = "*"
+      Action    = "s3:*"
+      Resource  = [aws_s3_bucket.app_logs.arn, "${aws_s3_bucket.app_logs.arn}/*"]
+      Condition = { Bool = { "aws:SecureTransport" = "false" } }
+    }]
+  })
+  depends_on = [aws_s3_bucket_public_access_block.app_logs]
 }
