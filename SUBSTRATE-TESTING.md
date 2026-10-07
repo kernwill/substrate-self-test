@@ -304,6 +304,39 @@ No cleanup needed - this is a read-only collector against your own org
 (FR-3.7's "read-only always" principle, applied to Okta the same way it
 already applies to AWS); nothing it does creates or modifies anything.
 
+## 7. Exercise the GitHub collector
+
+This repo is public at https://github.com/kernwill/substrate-self-test
+(public because branch protection and secret scanning are free only on
+public repos under GitHub Free). `main` is protected: 1 approving
+review, the `test` check, no force-pushes or deletions, and the rule
+applies to admins (`sa-10` requires that). Secret scanning and push
+protection are on.
+
+Create a fine-grained token for this repository only, with Repository
+permissions Administration, Environments and Metadata, all Read-only.
+Save it to a file without pasting it anywhere: put the `pbpaste`
+command in your shell first, then copy the token, then run it.
+
+```
+pbpaste > ~/.substrate/github/self-test.token && chmod 600 ~/.substrate/github/self-test.token
+```
+
+Then add the GitHub flags to the collect run:
+
+```
+./collect-okta.sh --out /tmp/self-test-runtime \
+  --github-owner kernwill --github-repo substrate-self-test \
+  --github-token-path ~/.substrate/github/self-test.token
+```
+
+Live result, 2026-10-07: `cm-3`, `cm-3.2`, `cm-5`, `sa-10` and `si-4`
+evidenced, and the boundary's GitHub component reads `covered`.
+
+To change `main` without a second account to approve: untick "Do not
+allow bypassing the above settings" in Settings, Branches, push, then
+tick it again.
+
 ## What this fixture can't show yet
 
 - No KSI indicator will ever read `satisfied` against this fixture,
