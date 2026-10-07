@@ -212,3 +212,25 @@ resource "aws_iam_role_policy_attachment" "substrate_collector" {
   role       = aws_iam_role.substrate_collector.name
   policy_arn = aws_iam_policy.substrate_readonly.arn
 }
+
+# --- ca-7: one AWS Config managed rule, so the recorder produces
+# continuous compliance results, not just configuration history. Every
+# bucket here refuses non-TLS requests, so it should read COMPLIANT. ---
+resource "aws_config_config_rule" "s3_tls_only" {
+  name = "s3-bucket-ssl-requests-only"
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_SSL_REQUESTS_ONLY"
+  }
+  depends_on = [aws_config_configuration_recorder.main]
+}
+
+# --- sc-28: one small encrypted EBS volume, unattached. It gives the EBS
+# collector a real volume to read; nothing is stored on it. ---
+resource "aws_ebs_volume" "encrypted" {
+  availability_zone = "us-east-2a"
+  size              = 1
+  type              = "gp3"
+  encrypted         = true
+  tags              = { Name = "substrate-self-test-encrypted" }
+}
