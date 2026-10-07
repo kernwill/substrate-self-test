@@ -3,7 +3,7 @@
 # (CR26 MAS-CSO-IIR). This is the provider's declaration - substrate
 # checks it against what it collects, but cannot prove it complete.
 owner: Will Kern, CEO
-declared_on: 2026-10-06
+declared_on: 2026-10-07
 components:
   # The one AWS account, and the only Region its free plan allows.
   - type: aws
@@ -15,7 +15,8 @@ components:
   # This repository: the offering's infrastructure code and CI.
   - type: github
     repository: kernwill/substrate-self-test
-  # The Kubernetes workloads described by the manifests in k8s/.
-  - type: kubernetes
-    name: self-test
-    manifests: k8s
+  # Not declared: the Kubernetes manifests in k8s/. They have never been
+  # deployed to a cluster, so they are not an information resource of
+  # the running offering (removed 2026-10-07). substrate still parses
+  # them statically. Re-declare them as soon as they run on a cluster;
+  # deploying to EKS is planned (substrate docs/REQUIREMENTS.md).
