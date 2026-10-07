@@ -14,7 +14,8 @@
         "s3:GetEncryptionConfiguration",
         "s3:GetBucketPublicAccessBlock",
         "s3:GetBucketLogging",
-        "s3:GetBucketPolicy"
+        "s3:GetBucketPolicy",
+        "s3:GetLifecycleConfiguration"
       ],
       "Resource": ["arn:*:s3:::*"]
     },
