@@ -17,7 +17,9 @@ See `SUBSTRATE-TESTING.md` for exact instructions on how to run
   `app_logs` (the regression target: public access blocked and TLS-only
   by default; its comment explains how to break it on purpose and revert).
 - `live.tf` - the rest of the live test environment (audit bucket,
-  CloudTrail, KMS key, AWS Config, Resolver DNSSEC), applied in us-east-2.
+  CloudTrail, KMS key, AWS Config and one managed rule, Resolver DNSSEC,
+  an encrypted EBS volume, the read-only collector role), applied in
+  us-east-2.
 - `substrate-boundary.yaml` - the declared assessment boundary.
 - `substrate-readonly-policy.json` - a copy of substrate's published
   read-only AWS policy, held by the `substrate-collector` role in
