@@ -21,7 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Pull requests only: the action needs a base and head ref, and
+      # fails on a push to main, which would leave the required `test`
+      # check never passing.
       - name: Dependency review
+        if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
       - name: Run tests
         run: echo "tests would run here"
