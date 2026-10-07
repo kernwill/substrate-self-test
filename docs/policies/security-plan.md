@@ -19,7 +19,7 @@ declared in `substrate-boundary.yaml`:
 
 | Component | What it is |
 |---|---|
-| AWS account, us-east-2 | S3 buckets (`app_data`, `app_logs`, the audit bucket), a KMS key, a CloudTrail trail with CloudWatch Logs, an AWS Config recorder, Resolver DNSSEC validation on the default VPC |
+| AWS account, us-east-2 | S3 buckets (`app_data`, `app_logs`, the audit bucket), a KMS key, a CloudTrail trail with CloudWatch Logs, an AWS Config recorder and one managed rule, Resolver DNSSEC validation on the default VPC, an encrypted EBS volume, and an encrypted PostgreSQL instance that holds no data and has no network access |
 | Okta org | Workforce identity for the administrator and the substrate collector app |
 | GitHub repository `kernwill/substrate-self-test` | Infrastructure code, Kubernetes manifests, CI, and these documents |
 
@@ -41,8 +41,11 @@ much of it is verified.
 **Confidentiality.**
 
 - S3 buckets block all public access and refuse non-TLS requests.
-- `app_data` is encrypted with a customer-managed KMS key that rotates
-  automatically.
+- `app_data` and the PostgreSQL instance are encrypted with a
+  customer-managed KMS key that rotates automatically. The database's
+  master password is generated and held by AWS Secrets Manager.
+- The database has no public address and its security group allows no
+  traffic.
 - Administrator sign-in to the Okta Admin Console requires
   phishing-resistant authentication (Okta FastPass) from a registered
   device.
