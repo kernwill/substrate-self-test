@@ -22,7 +22,11 @@ declared in `substrate-boundary.yaml`:
 | AWS account, us-east-2 | S3 buckets (`app_data`, `app_logs`, the audit bucket), a KMS key, a CloudTrail trail with CloudWatch Logs, an AWS Config recorder, Resolver DNSSEC validation on the default VPC |
 | Okta org | Workforce identity for the administrator and the substrate collector app |
 | GitHub repository `kernwill/substrate-self-test` | Infrastructure code, Kubernetes manifests, CI, and these documents |
-| Kubernetes manifests in `k8s/` | A Deployment, NetworkPolicy, Secret and ConfigMap. Defined but not deployed to any cluster |
+
+The Kubernetes manifests in `k8s/` (a Deployment, NetworkPolicy, Secret
+and ConfigMap) are **outside the boundary** because they have never been
+deployed to a cluster. They return to the boundary, and to this table,
+in the same pull request that deploys them.
 
 ## Control baseline (PL-10)
 
