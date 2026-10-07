@@ -183,3 +183,32 @@ data "aws_vpc" "default" {
 resource "aws_route53_resolver_dnssec_config" "default_vpc" {
   resource_id = data.aws_vpc.default.id
 }
+
+# --- Substrate's own collection identity: read-only. ---
+# A role holding exactly substrate's published read-only policy
+# (substrate-readonly-policy.json, a copy of substrate's
+# docs/aws-readonly-policy.json - re-copy it when that file changes).
+# Only the substrate-self-test user can assume it, so collection needs
+# no new long-lived keys: the "substrate-collector" profile in
+# ~/.aws/config assumes it from the default profile.
+resource "aws_iam_policy" "substrate_readonly" {
+  name   = "substrate-readonly"
+  policy = jsonencode(jsondecode(file("${path.module}/substrate-readonly-policy.json")))
+}
+
+resource "aws_iam_role" "substrate_collector" {
+  name = "substrate-collector"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/substrate-self-test" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "substrate_collector" {
+  role       = aws_iam_role.substrate_collector.name
+  policy_arn = aws_iam_policy.substrate_readonly.arn
+}

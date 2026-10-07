@@ -5,7 +5,8 @@ owner: CEO
 
 # Separation of duties
 
-Effective 2026-10-07. Reviewed at least every 3 months.
+Effective 2026-10-07. Reviewed at least every 3 months. Last changed
+2026-10-07: AWS collection moved to a read-only role.
 
 ## Duties (AC-5 a)
 
@@ -42,17 +43,19 @@ The duty that must stay separated is **authoring a change** versus
 **AWS.**
 
 - The Administrator holds administrative access for Terraform changes.
-- Substrate collection is authorized for read-only access only, under
-  the published policy in substrate's `docs/aws-readonly-policy.json`.
+- Substrate collection uses the IAM role `substrate-collector`, which
+  holds only substrate's published read-only policy (copied in this
+  repository as `substrate-readonly-policy.json`). Only the
+  Administrator's IAM user can assume it, and it has no long-lived
+  keys.
 
 ## Known deviations
 
-**AWS collection uses an administrative identity.** Today the IAM user
-`substrate-self-test` holds `AdministratorAccess`, and it is used both
-by Terraform and by substrate collection. This does not meet the
-read-only authorization above. The fix is a separate identity limited
-to the published read-only policy. When that lands, it is recorded by
-updating this section.
+**Resolved: AWS collection used an administrative identity.** Until
+the `substrate-collector` role was created, collection ran as the
+Administrator's IAM user, which holds `AdministratorAccess`. Collection
+now assumes the read-only role. The Administrator's user keeps
+administrative access for Terraform.
 
 **Bypassing branch protection.** The Administrator can temporarily
 disable "applies to administrators" in the repository settings. That is

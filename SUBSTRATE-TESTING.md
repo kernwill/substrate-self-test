@@ -108,19 +108,28 @@ collectors and controls are added.
 
 ## 5. Optional: exercise the live AWS collectors
 
-**Status: still shelved, re-confirmed 2026-09-22.** Blocked on AWS
-account access - the account reachable from the existing sign-in sits
-inside an AWS Organization whose service control policy denies
-`s3:CreateBucket` (not fixable from that member account), and a
-fresh-account signup then hit a hard AWS Builder ID error requiring
-AWS Support. Re-checked 2026-09-22 with a read-only
-`aws iam simulate-principal-policy --action-names s3:CreateBucket`
-against the current identity (`arn:aws:iam::034313911997:user/substrate-self-test`)
-rather than assumed unchanged from memory: still `explicitDeny`,
-`AllowedByOrganizations: false` - same SCP block, nothing resolved.
-Tracked as open item 8 in `docs/REQUIREMENTS.md` section 31. Revisit
-once a clean AWS account is available; the instructions below are
-otherwise unchanged and ready to run as-is.
+**Status: live since 2026-10-06.** The test resources are in
+`main.tf` and `live.tf`, applied in us-east-2 (the account's free plan
+allows no other Region). GuardDuty, Inspector and Security Hub are
+denied by the account's service control policy, and `collect` skips
+them by name. The manual setup below predates `live.tf` and is kept
+for reference.
+
+**Collect with the read-only role, never the admin user.** `live.tf`
+creates the `substrate-collector` role, holding exactly
+`substrate-readonly-policy.json` (a copy of substrate's
+`docs/aws-readonly-policy.json`). Add a profile that assumes it from
+your default credentials:
+
+```
+# ~/.aws/config
+[profile substrate-collector]
+role_arn = arn:aws:iam::034313911997:role/substrate-collector
+source_profile = default
+region = us-east-2
+```
+
+Then run collection with `AWS_PROFILE=substrate-collector`.
 
 **Note:** `substrate collect` requires valid Okta flags on every
 invocation now (section 6 below, resolved item 12) - the AWS-focused
@@ -333,9 +342,44 @@ Then add the GitHub flags to the collect run:
 Live result, 2026-10-07: `cm-3`, `cm-3.2`, `cm-5`, `sa-10` and `si-4`
 evidenced, and the boundary's GitHub component reads `covered`.
 
-To change `main` without a second account to approve: untick "Do not
-allow bypassing the above settings" in Settings, Branches, push, then
-tick it again.
+Changes to `main` go through a pull request approved by the
+Independent Reviewer (`elliskern`). Merges use merge commits only.
+
+## 8. Exercise policy documents (ADR 0021)
+
+`docs/policies/` holds eight policies claiming 18 document-shaped
+controls. A document counts as verified only when its latest change
+was merged in a pull request approved, at its final head, by someone
+who neither opened it nor authored a commit in it, within the last 3
+months.
+
+```
+cd /Users/willkern/substrate-self-test
+../substrate/bin/substrate collect-documents --dir docs/policies \
+  --out /tmp/self-test-documents.json \
+  --github-owner kernwill --github-repo substrate-self-test \
+  --github-token-path ~/.substrate/github/self-test.token
+
+../substrate/bin/substrate compile --source . \
+  --boundary substrate-boundary.yaml \
+  --runtime /tmp/self-test-runtime \
+  --documents /tmp/self-test-documents.json --documents-root . \
+  --as-of "$(date +%Y-%m-%d)" --out /tmp/self-test-out
+```
+
+`documents_report.json` in the output lists each document, whether it
+verified, and when it goes stale. The repository is public, so the
+section 7 token needs no extra permissions; a private copy would need
+Contents and Pull requests read access too. The collection needs a
+full clone, not a shallow one.
+
+Live result, 2026-10-07: all 8 verified, 52 of 209 controls verified
+(34 machine, 18 document).
+
+**Quarterly re-review.** `.github/workflows/policy-review-reminder.yml`
+opens an issue each Monday once the newest policy merge is 60 days
+old. The review pull request must touch every document, because each
+file's own latest merge is what counts.
 
 ## What this fixture can't show yet
 

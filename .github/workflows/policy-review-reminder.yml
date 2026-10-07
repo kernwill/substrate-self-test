@@ -1,0 +1,43 @@
+name: Policy review reminder
+
+# Policy documents stop counting as verified 3 months after their last
+# approved merge (substrate ADR 0021, CR26 VDR-TFR-NMV). Each Monday,
+# this opens an issue once the newest merge touching docs/policies is
+# 60 days old, leaving about a month for the review.
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Open a review issue when the policies are due
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          last=$(git log -1 --first-parent --format=%cI -- docs/policies)
+          age=$(( ( $(date +%s) - $(date -d "$last" +%s) ) / 86400 ))
+          due=$(date -d "$last + 3 months" +%Y-%m-%d)
+          echo "policies last merged $last ($age days ago), stale after $due"
+          [ "$age" -ge 60 ] || exit 0
+          title="Quarterly policy review due by $due"
+          if gh issue list --state open --search "in:title \"$title\"" --json number --jq 'length' | grep -qv '^0$'; then
+            echo "issue already open"
+            exit 0
+          fi
+          gh issue create --title "$title" --body "$(printf '%s\n' \
+            "@kernwill @elliskern the documents in \`docs/policies/\` were last approved $last and stop counting as verified on $due." \
+            "" \
+            "1. The Administrator updates anything that changed and opens a pull request touching every document (at least the effective date)." \
+            "2. The Independent Reviewer reads and approves it, without pushing commits." \
+            "3. The Administrator merges it; then rerun \`substrate collect-documents\`.")"

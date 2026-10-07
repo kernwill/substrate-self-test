@@ -1,0 +1,162 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SubstrateS3CollectorAccountLevel",
+      "Effect": "Allow",
+      "Action": ["s3:ListAllMyBuckets"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateS3CollectorBucketLevel",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetEncryptionConfiguration",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketLogging",
+        "s3:GetBucketPolicy"
+      ],
+      "Resource": ["arn:*:s3:::*"]
+    },
+    {
+      "Sid": "SubstrateIAMCollectorAccountLevel",
+      "Effect": "Allow",
+      "Action": ["iam:ListUsers"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateIAMCollectorUserLevel",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetLoginProfile",
+        "iam:ListMFADevices",
+        "iam:ListAccessKeys"
+      ],
+      "Resource": ["arn:*:iam::*:user/*"]
+    },
+    {
+      "Sid": "SubstrateCloudTrailCollector",
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "cloudtrail:GetEventSelectors"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateSecurityGroupsCollector",
+      "Effect": "Allow",
+      "Action": ["ec2:DescribeSecurityGroups"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateSubnetsCollector",
+      "Effect": "Allow",
+      "Action": ["ec2:DescribeSubnets", "ec2:DescribeRouteTables"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateEBSCollector",
+      "Effect": "Allow",
+      "Action": ["ec2:DescribeVolumes"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateRDSCollector",
+      "Effect": "Allow",
+      "Action": ["rds:DescribeDBInstances"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateGuardDutyCollector",
+      "Effect": "Allow",
+      "Action": [
+        "guardduty:ListDetectors",
+        "guardduty:GetDetector",
+        "guardduty:ListFindings",
+        "guardduty:GetFindings"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateConfigCollector",
+      "Effect": "Allow",
+      "Action": [
+        "config:DescribeConfigurationRecorderStatus",
+        "config:DescribeConfigurationRecorders",
+        "config:DescribeComplianceByConfigRule"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateSecurityHubCollector",
+      "Effect": "Allow",
+      "Action": ["securityhub:DescribeHub", "securityhub:GetFindings"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateKMSCollectorAccountLevel",
+      "Effect": "Allow",
+      "Action": ["kms:ListKeys"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateKMSCollectorKeyLevel",
+      "Effect": "Allow",
+      "Action": [
+        "kms:DescribeKey",
+        "kms:GetKeyRotationStatus",
+        "kms:GetKeyPolicy"
+      ],
+      "Resource": ["arn:*:kms:*:*:key/*"]
+    },
+    {
+      "Sid": "SubstrateShieldCollector",
+      "Effect": "Allow",
+      "Action": ["shield:GetSubscriptionState"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateInspectorCollector",
+      "Effect": "Allow",
+      "Action": ["inspector2:BatchGetAccountStatus"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateACMCollector",
+      "Effect": "Allow",
+      "Action": ["acm:ListCertificates"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateDNSSECCollector",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcs",
+        "route53resolver:GetResolverDnssecConfig",
+        "route53:ListHostedZones",
+        "route53:GetDNSSEC"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateClientVPNCollector",
+      "Effect": "Allow",
+      "Action": ["ec2:DescribeClientVpnEndpoints"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateMacieCollector",
+      "Effect": "Allow",
+      "Action": ["macie2:GetMacieSession"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateEKSCollector",
+      "Effect": "Allow",
+      "Action": ["eks:ListClusters", "eks:DescribeCluster"],
+      "Resource": "*"
+    }
+  ]
+}
