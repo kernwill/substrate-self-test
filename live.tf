@@ -108,8 +108,9 @@ resource "aws_s3_bucket_policy" "audit" {
 }
 
 # --- au-2, au-7, au-9, au-12: a CloudTrail trail with log file
-# validation, delivering to CloudWatch Logs. Single-Region: the free
-# plan doesn't support multi-Region trails. ---
+# validation, delivering to CloudWatch Logs. Multi-Region since
+# 2026-10-08, so it also records us-west-2, where the database copies
+# live (the old account's free plan didn't allow it). ---
 resource "aws_cloudwatch_log_group" "trail" {
   name              = "/substrate-self-test/cloudtrail"
   retention_in_days = 30
@@ -141,7 +142,7 @@ resource "aws_cloudtrail" "main" {
   s3_bucket_name                = aws_s3_bucket.audit.id
   s3_key_prefix                 = "cloudtrail"
   include_global_service_events = true
-  is_multi_region_trail         = false
+  is_multi_region_trail         = true
   enable_log_file_validation    = true
   cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
   cloud_watch_logs_role_arn     = aws_iam_role.trail_to_logs.arn
@@ -278,4 +279,98 @@ resource "aws_db_instance" "app" {
   backup_retention_period     = 7
   skip_final_snapshot         = true
   deletion_protection         = false
+}
+
+# --- Security services (2026-10-08), possible since the move to an
+# account in Rookwright's own organization. GuardDuty with EBS malware
+# protection (si-3, si-4, si-4.2, si-4.4, au-6, au-6.1), Security Hub
+# (ca-7), Inspector EC2 and ECR scanning (ra-5, si-2.2), and Macie
+# (cm-12.1). With no EC2 instances or ECR images, Inspector and
+# GuardDuty's malware scans have nothing to scan and cost nothing. ---
+resource "aws_guardduty_detector" "main" {
+  enable = true
+}
+
+resource "aws_guardduty_detector_feature" "ebs_malware_protection" {
+  detector_id = aws_guardduty_detector.main.id
+  name        = "EBS_MALWARE_PROTECTION"
+  status      = "ENABLED"
+}
+
+resource "aws_securityhub_account" "main" {
+  enable_default_standards = true
+  depends_on               = [aws_config_configuration_recorder_status.main]
+}
+
+resource "aws_inspector2_enabler" "main" {
+  account_ids    = [data.aws_caller_identity.current.account_id]
+  resource_types = ["EC2", "ECR"]
+}
+
+resource "aws_macie2_account" "main" {
+  status = "ENABLED"
+}
+
+# --- Second site in us-west-2 (cp-6, cp-6.1, cp-7, cp-7.1): the
+# database's automated backups are replicated there, and a read replica
+# runs there. Both are encrypted with a key in us-west-2, since a KMS key
+# can't be used outside its Region. Nothing in us-west-2 is reachable:
+# no public address, and a security group with no rules. ---
+provider "aws" {
+  alias  = "west"
+  region = "us-west-2"
+}
+
+resource "aws_kms_key" "app_west" {
+  provider                = aws.west
+  description             = "substrate self-test key, us-west-2"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+}
+
+resource "aws_db_instance_automated_backups_replication" "app" {
+  provider               = aws.west
+  source_db_instance_arn = aws_db_instance.app.arn
+  kms_key_id             = aws_kms_key.app_west.arn
+  retention_period       = 7
+}
+
+data "aws_vpc" "default_west" {
+  provider = aws.west
+  default  = true
+}
+
+data "aws_subnets" "default_west" {
+  provider = aws.west
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default_west.id]
+  }
+}
+
+resource "aws_db_subnet_group" "app_west" {
+  provider   = aws.west
+  name       = "substrate-self-test-west"
+  subnet_ids = data.aws_subnets.default_west.ids
+}
+
+resource "aws_security_group" "db_west" {
+  provider    = aws.west
+  name        = "substrate-self-test-db-west"
+  description = "No inbound or outbound rules: nothing can reach the replica"
+  vpc_id      = data.aws_vpc.default_west.id
+}
+
+resource "aws_db_instance" "app_replica" {
+  provider               = aws.west
+  identifier             = "substrate-self-test-replica"
+  replicate_source_db    = aws_db_instance.app.arn
+  instance_class         = "db.t4g.micro"
+  storage_encrypted      = true
+  kms_key_id             = aws_kms_key.app_west.arn
+  db_subnet_group_name   = aws_db_subnet_group.app_west.name
+  vpc_security_group_ids = [aws_security_group.db_west.id]
+  publicly_accessible    = false
+  skip_final_snapshot    = true
+  deletion_protection    = false
 }

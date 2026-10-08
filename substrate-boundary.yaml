@@ -10,7 +10,7 @@ components:
   # Rookwright's own AWS organization.
   - type: aws
     account: "632839731153"
-    regions: [us-east-2]
+    regions: [us-east-2, us-west-2]
   # The Okta org that holds the offering's workforce identities.
   - type: okta
     org: https://integrator-2677113.okta.com
