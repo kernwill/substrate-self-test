@@ -43,7 +43,7 @@ us-east-2 only.
 
 | Area-wide disruption | Accessibility problem | Mitigation |
 |---|---|---|
-| us-east-2 outage | AWS data and audit records are unreachable. No other Region can be used: the free plan permits only us-east-2. | Wait for the Region to recover. The environment holds no data that cannot be regenerated. If a longer outage is expected, upgrade the account plan and rebuild in another Region from Terraform. |
+| us-east-2 outage | AWS data and audit records are unreachable. us-west-2 is permitted as a second site but holds no copy yet. | Wait for the Region to recover. The environment holds no data that cannot be regenerated. If a longer outage is expected, rebuild in us-west-2 from Terraform. |
 | GitHub outage | The hosted repository is unreachable | Keep working from the local clone. Changes wait for GitHub to recover, because none may bypass review. |
 | Loss of the administrator's Mac | The local clone, Terraform state and collector credentials are gone | Re-clone from GitHub. Re-issue credentials, signing in to Okta from the registered iPhone. Rebuild state as described above. |
 

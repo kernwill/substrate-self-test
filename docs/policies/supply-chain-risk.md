@@ -28,7 +28,7 @@ what changed.
 | Supplier or component | Risk | Assessment and response |
 |---|---|---|
 | AWS | Platform compromise; account takeover | Accepted: the platform's own controls are relied on. Account access is limited to the Administrator. CloudTrail and Config record changes. |
-| AWS free plan | Only us-east-2 is usable, so there is no regional failover | Accepted for a test environment (`contingency-plan.md`) |
+| AWS organization guardrails | A service control policy limits the account to us-east-2 and us-west-2 (us-east-1 for global services) | Intended: it bounds where resources can exist. Rookwright administers the organization since 2026-10-08, so changes are deliberate. |
 | Okta Integrator Free Plan | It is a developer org, not Okta's FedRAMP offering. A previous org's admin access was lost and could not be recovered. | Accepted for a self-test only. A production offering must use an identity provider authorized at Class C. Admin access is now tied to two registered devices. |
 | GitHub | Repository compromise or loss of service | Branch protection that binds administrators; secret scanning and push protection; a local clone (`contingency-plan.md`) |
 | GitHub Actions `actions/checkout`, `actions/dependency-review-action` | A version tag can be moved to different code | Each is pinned to a full commit SHA, with its version in a comment. Updating one is a reviewed change. |
