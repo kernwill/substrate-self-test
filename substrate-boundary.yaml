@@ -3,11 +3,13 @@
 # (CR26 MAS-CSO-IIR). This is the provider's declaration - substrate
 # checks it against what it collects, but cannot prove it complete.
 owner: Will Kern, CEO
-declared_on: 2026-10-07
+declared_on: 2026-10-08
 components:
-  # The one AWS account, and the only Region its free plan allows.
+  # The one AWS account and its home Region. Moved 2026-10-08 from
+  # 034313911997, whose root access was unrecoverable, to an account in
+  # Rookwright's own AWS organization.
   - type: aws
-    account: "034313911997"
+    account: "632839731153"
     regions: [us-east-2]
   # The Okta org that holds the offering's workforce identities.
   - type: okta

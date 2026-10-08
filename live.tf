@@ -188,7 +188,7 @@ resource "aws_route53_resolver_dnssec_config" "default_vpc" {
 # A role holding exactly substrate's published read-only policy
 # (substrate-readonly-policy.json, a copy of substrate's
 # docs/aws-readonly-policy.json - re-copy it when that file changes).
-# Only the substrate-self-test user can assume it, so collection needs
+# Only the substrate-admin user can assume it, so collection needs
 # no new long-lived keys: the "substrate-collector" profile in
 # ~/.aws/config assumes it from the default profile.
 resource "aws_iam_policy" "substrate_readonly" {
@@ -202,7 +202,7 @@ resource "aws_iam_role" "substrate_collector" {
     Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
-      Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/substrate-self-test" }
+      Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/substrate-admin" }
       Action    = "sts:AssumeRole"
     }]
   })
@@ -240,7 +240,7 @@ resource "aws_ebs_volume" "encrypted" {
 # It holds no data. Not reachable from anywhere: no public address and a
 # security group with no rules. AWS generates the master password and
 # keeps it in Secrets Manager, so it is never in Terraform state.
-# No cross-Region copy yet (the free plan allows only us-east-2), so
+# No cross-Region copy yet (a follow-up adds one in us-west-2), so
 # substrate correctly reports cp-6, cp-6.1, cp-7 and cp-7.1 as not
 # satisfied until one exists. ---
 data "aws_subnets" "default" {

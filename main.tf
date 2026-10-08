@@ -8,7 +8,8 @@ terraform {
 }
 
 provider "aws" {
-  # The account's free plan allows only its selected Region (us-east-2).
+  # The home Region. The account's organization allows us-east-2 and
+  # us-west-2 (a second site), plus us-east-1 for global services only.
   region = "us-east-2"
 }
 
