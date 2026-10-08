@@ -38,25 +38,29 @@ Resumption is by rebuilding, not restoring:
 ## Alternate storage site accessibility (CP-6(3))
 
 The repository has two copies: GitHub, and the clone on the
-administrator's Mac. AWS data, including the audit bucket, is in
+administrator's Mac. In AWS, the database's automated backups are
+replicated to us-west-2 and a read replica runs there, both encrypted
+with a us-west-2 key. The S3 buckets, including the audit bucket, are in
 us-east-2 only.
 
 | Area-wide disruption | Accessibility problem | Mitigation |
 |---|---|---|
-| us-east-2 outage | AWS data and audit records are unreachable. us-west-2 is permitted as a second site but holds no copy yet. | Wait for the Region to recover. The environment holds no data that cannot be regenerated. If a longer outage is expected, rebuild in us-west-2 from Terraform. |
+| us-east-2 outage | The S3 buckets and audit records are unreachable. The database's backups and read replica in us-west-2 stay reachable. | Restore or promote the database in us-west-2 if needed. The buckets hold nothing that can't be regenerated; wait for the Region, or rebuild in us-west-2 from Terraform. |
 | GitHub outage | The hosted repository is unreachable | Keep working from the local clone. Changes wait for GitHub to recover, because none may bypass review. |
 | Loss of the administrator's Mac | The local clone, Terraform state and collector credentials are gone | Re-clone from GitHub. Re-issue credentials, signing in to Okta from the registered iPhone. Rebuild state as described above. |
 
 ## Alternate processing site accessibility (CP-7(2))
 
 Processing happens in two places: AWS us-east-2, and whichever machine
-runs substrate (today, the administrator's Mac). The alternate
+runs substrate (today, the administrator's Mac). The database's
+alternate processing site is its read replica in us-west-2, which can be
+promoted to a standalone database. The alternate
 processing site for substrate is any other machine with Go and the
 repository; it needs no special setup.
 
 | Area-wide disruption | Accessibility problem | Mitigation |
 |---|---|---|
-| us-east-2 outage | Live collection from AWS cannot run | Static compilation from the repository still runs. Live collection resumes when the Region does, or after a rebuild in another Region as above. |
+| us-east-2 outage | Live collection from AWS cannot run | Static compilation from the repository still runs. Live collection resumes when the Region does, or after a rebuild in us-west-2 as above. |
 | Regional disruption where the administrator works (power, network) | No machine can reach the platforms | Run from any machine with network access once one is available. All credentials can be re-issued remotely. |
 | Okta outage | No admin sign-in and no Okta collection | AWS and GitHub collection still run. The Okta evidence is marked undetermined until Okta recovers. |
 
