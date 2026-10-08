@@ -77,7 +77,9 @@ plan first.
 - AWS, Okta and GitHub operate the underlying platforms. Their own
   controls are assumed, not verified. `supply-chain-risk.md` assesses
   them.
-- The AWS account is on AWS's free plan, which permits only us-east-2.
+- The AWS account is a member of Rookwright's own AWS organization. A
+  service control policy limits it to us-east-2 (home) and us-west-2
+  (second site), with us-east-1 for global services only.
 - The administrator's Mac holds the Terraform state and the collector
   credentials. `contingency-plan.md` covers its loss.
 

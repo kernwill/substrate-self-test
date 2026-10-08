@@ -108,12 +108,18 @@ collectors and controls are added.
 
 ## 5. Optional: exercise the live AWS collectors
 
-**Status: live since 2026-10-06.** The test resources are in
-`main.tf` and `live.tf`, applied in us-east-2 (the account's free plan
-allows no other Region). GuardDuty, Inspector and Security Hub are
-denied by the account's service control policy, and `collect` skips
-them by name. The manual setup below predates `live.tf` and is kept
-for reference.
+**Status: live since 2026-10-06; moved 2026-10-08 to account
+632839731153.** The test resources are in `main.tf` and `live.tf`,
+applied in us-east-2. The account is a "project" in Rookwright's own AWS
+organization (AWS's settings.aws.com sign-up, with advanced features
+activated). A service control policy limits it to us-east-2 and
+us-west-2, with us-east-1 for global services only. The previous
+account, 034313911997, was a project in an AWS-run organization whose
+policies blocked GuardDuty, Security Hub, Inspector, Macie and other
+Regions; its root access was never recoverable. Terraform runs as the
+`substrate-new` profile (IAM user `substrate-admin`):
+`AWS_PROFILE=substrate-new terraform plan`. The manual setup below
+predates `live.tf` and is kept for reference.
 
 **Collect with the read-only role, never the admin user.** `live.tf`
 creates the `substrate-collector` role, holding exactly
@@ -124,8 +130,8 @@ your default credentials:
 ```
 # ~/.aws/config
 [profile substrate-collector]
-role_arn = arn:aws:iam::034313911997:role/substrate-collector
-source_profile = default
+role_arn = arn:aws:iam::632839731153:role/substrate-collector
+source_profile = substrate-new
 region = us-east-2
 ```
 
@@ -262,7 +268,11 @@ Full setup, start to finish:
    above).
 4. Grant exactly the scopes `docs/okta-api-scopes.md` documents
    (`okta.policies.read`, `okta.logs.read`, `okta.users.read`,
-   `okta.roles.read`) under the app's **Okta API Scopes** tab.
+   `okta.roles.read`, `okta.orgs.read`) under the app's **Okta API
+   Scopes** tab. `okta.orgs.read` (added 2026-10-08, ADR 0023) lets the
+   System Log replay check that the log reaches back to the org's
+   creation; Okta refuses the whole token request if any requested
+   scope isn't granted.
 5. Assign **Read-Only Administrator** under the app's **Admin roles**
    tab (see above).
 6. Run collect against it, then merge into compile:
