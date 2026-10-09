@@ -24,6 +24,23 @@ Resumption is by rebuilding, not restoring:
 3. Re-issue collector credentials.
 4. Run substrate, and confirm the result matches the last recorded run.
 
+## The database: recovery objectives and testing
+
+The database is the one component restored rather than rebuilt. Within
+the 5-day resumption above, it is recovered to a known state:
+
+- **Recovery point objective: 24 hours.** AWS Backup takes a snapshot
+  every day at 05:00 UTC and keeps it 14 days.
+- **Recovery time objective: 4 hours** from starting a restore to a
+  usable database.
+
+**Testing.** Every Saturday, AWS Backup restore testing restores the
+newest snapshot into a throwaway database with no network access, keeps
+it for an hour, and deletes it. Each test's outcome opens a GitHub issue
+labelled `contingency-test`. Within 3 days the Administrator reviews it
+and closes it with a comment saying what was checked, and, if the test
+failed or ran slow, which corrective action was started.
+
 ## Critical assets (CP-2(8))
 
 | Asset | Why it is critical | Protection |
@@ -31,7 +48,7 @@ Resumption is by rebuilding, not restoring:
 | The GitHub repository | Source of truth for all infrastructure, manifests and these documents | Hosted by GitHub, with a full clone on the administrator's Mac. Protected `main`. |
 | Okta Admin Console access | Without it the Okta component cannot be administered or re-credentialed. A previous org was lost this way. | Okta Verify FastPass on two registered devices, a Mac and an iPhone |
 | AWS root and administrator credentials | Needed to rebuild AWS resources | Held by the administrator only |
-| Terraform state | Maps code to live AWS resources | Local file on the administrator's Mac, deliberately not in git. If lost, resources are re-imported or destroyed and recreated. |
+| Terraform state | Maps code to live AWS resources | A versioned, encrypted S3 bucket, every previous version kept. Never in git. |
 | Collector credentials | Needed to run substrate | Under `~/.substrate/` on the administrator's Mac. All can be re-issued from their consoles. |
 | Audit records (CloudTrail bucket and CloudWatch Logs) | The environment's record of changes | Versioned, encrypted S3 with log file validation |
 
