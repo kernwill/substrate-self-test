@@ -34,9 +34,11 @@ resource "aws_iam_role_policy" "incident_drill" {
         Resource = "*"
       },
       {
-        Effect   = "Allow"
-        Action   = "guardduty:CreateSampleFindings"
-        Resource = aws_guardduty_detector.main.arn
+        Effect = "Allow"
+        Action = "guardduty:CreateSampleFindings"
+        # AWS checks this action against the detector's findings/create
+        # sub-resource, not the detector itself (first run, 2026-10-09).
+        Resource = "${aws_guardduty_detector.main.arn}/findings/create"
       },
     ]
   })
