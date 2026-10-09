@@ -275,12 +275,19 @@ resource "aws_secretsmanager_secret" "db_master" {
   kms_key_id = aws_kms_key.app.arn
 }
 
-# Write-only: the value goes to Secrets Manager but never into state.
-# Bump the version to rotate (together with password_wo_version).
-resource "aws_secretsmanager_secret_version" "db_master" {
-  secret_id                = aws_secretsmanager_secret.db_master.id
-  secret_string_wo         = ephemeral.aws_secretsmanager_random_password.db_master.random_password
-  secret_string_wo_version = 1
+# The secret's value was written once (2026-10-08), write-only, and is
+# no longer managed here: refreshing a secret version calls
+# GetSecretValue even when it is write-only, and the nightly drift
+# check's role must never read the database password (found
+# 2026-10-09). The secret and its value stay in AWS; Terraform keeps
+# managing the secret itself. To rotate, set a new password on the
+# database (bump password_wo_version) and store the same value in the
+# secret by hand with put-secret-value, outside this configuration.
+removed {
+  from = aws_secretsmanager_secret_version.db_master
+  lifecycle {
+    destroy = false
+  }
 }
 
 resource "aws_db_instance" "app" {
