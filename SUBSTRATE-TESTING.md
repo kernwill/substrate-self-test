@@ -372,6 +372,7 @@ cd /Users/willkern/substrate-self-test
 
 ../substrate/bin/substrate compile --source . \
   --boundary substrate-boundary.yaml \
+  --parameters substrate-parameters.yaml \
   --runtime /tmp/self-test-runtime \
   --documents /tmp/self-test-documents.json --documents-root . \
   --as-of "$(date +%Y-%m-%d)" --out /tmp/self-test-out
@@ -390,6 +391,26 @@ Live result, 2026-10-07: all 8 verified, 52 of 209 controls verified
 opens an issue each Monday once the newest policy merge is 60 days
 old. The review pull request must touch every document, because each
 file's own latest merge is what counts.
+
+## Organization-defined parameters
+
+`substrate-parameters.yaml` declares the values NIST leaves to the
+organization, and substrate judges collected evidence against them. It
+is a declaration, like the boundary file, so it changes only through a
+reviewed pull request. Today it classifies every Okta app sign-in
+policy as privileged or non-privileged (`ia-2.2`, `ia-2.8`) and names
+the profile attribute that records each user's status (`ia-4.4`). A
+new sign-in policy left out of the file makes both sign-in controls
+undetermined until it's classified.
+
+The Okta Account Management Policy's catch-all rule can't be edited,
+so the rule "Require phishing-resistant for everyone" sits above it,
+matching every sign-in. Substrate reports the catch-all as unreachable
+behind it.
+
+Live result, 2026-10-09: all three pass; 77 of 209 verified, and the
+only failing indicator is `sc-5` (Shield Advanced, not subscribed by
+choice).
 
 ## What this fixture can't show yet
 

@@ -1,0 +1,24 @@
+# Organization-defined parameter values for the substrate self-test: the
+# yardsticks NIST leaves to the organization. Like the boundary file,
+# this is the provider's declaration, approved through a reviewed pull
+# request. It is never evidence: substrate judges collected evidence
+# against it, and every report shows these values.
+owner: Will Kern, CEO
+declared_on: 2026-10-09
+okta:
+  # Every app sign-in policy in the Okta org, classified by who signs in
+  # through it (ia-2.2 MFA for non-privileged accounts, ia-2.8
+  # replay-resistant authentication). An unclassified policy leaves both
+  # controls undetermined.
+  privileged_access_policies:
+    - Okta Admin Console
+  non_privileged_access_policies:
+    - Any two factors
+    - Okta Account Management Policy
+    - Okta Browser Plugin
+    - Okta Dashboard
+    - Okta OIN Submission Tester
+    - substrate test - device required
+  # The Okta profile attribute that records each user's status
+  # (employee, contractor and so on), for ia-4.4.
+  user_status_attribute: userType
