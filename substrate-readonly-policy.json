@@ -22,7 +22,7 @@
     {
       "Sid": "SubstrateIAMCollectorAccountLevel",
       "Effect": "Allow",
-      "Action": ["iam:ListUsers"],
+      "Action": ["iam:ListUsers", "iam:GetAccountAuthorizationDetails"],
       "Resource": "*"
     },
     {
