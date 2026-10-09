@@ -1,0 +1,54 @@
+name: Incident drill
+
+# Once a month, create a GuardDuty sample finding (ir-3). EventBridge
+# must open a [DRILL] issue for it within 15 minutes, assigned to the
+# Administrator, who acknowledges it by closing it with a comment. This
+# job fails if the issue doesn't appear; it never closes the issue
+# itself, since the human response is part of what is tested.
+on:
+  schedule:
+    - cron: "0 14 1 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: incident-drill
+  cancel-in-progress: false
+
+jobs:
+  drill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      id-token: write
+      issues: read
+    steps:
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::632839731153:role/substrate-incident-drill
+          aws-region: us-east-2
+          role-session-name: incident-drill-${{ github.run_id }}
+      - name: Create a sample finding
+        id: create
+        run: |
+          echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          detector="$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text)"
+          aws guardduty create-sample-findings --detector-id "$detector" --finding-types "UnauthorizedAccess:EC2/TorClient"
+          echo "Sample finding created."
+      - name: Wait for the drill issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          STARTED: ${{ steps.create.outputs.started }}
+        run: |
+          for i in $(seq 1 30); do
+            n="$(gh issue list --label drill --state all --search "created:>=$STARTED" --json number --jq '.[0].number')"
+            if [ -n "$n" ]; then
+              echo "Drill issue #$n opened."
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "No drill issue within 15 minutes: the incident pipeline failed. Check the dead-letter queue substrate-incident-issues-dlq."
+          exit 1
