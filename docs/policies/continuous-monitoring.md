@@ -55,3 +55,10 @@ assigned to the Administrator, and GitHub notifies them. The issue is
 the incident's record: it is worked and closed with a comment saying
 what was done. GuardDuty sample findings from drills open issues
 labelled `drill` too, and are never counted as real incidents.
+
+**Incident drill.** On the first of every month a GitHub Actions job
+creates a GuardDuty sample finding. Its `[DRILL]` issue must appear
+within 15 minutes, and the Administrator acknowledges it within 3 days
+by closing it with a comment saying the alert was received and what
+would have been done. A missing issue fails the job; an unacknowledged
+drill is a failed drill.

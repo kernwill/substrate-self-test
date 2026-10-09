@@ -43,6 +43,9 @@ access:
     # The nightly drift check (GitHub Actions on main, by OIDC): reads
     # configuration, never data.
     - arn:aws:iam::632839731153:role/substrate-drift-check
+    # The monthly incident drill: may only create GuardDuty sample
+    # findings.
+    - arn:aws:iam::632839731153:role/substrate-incident-drill
     # Created by AWS when the account joined Rookwright's organization:
     # console access through AWS's account-access service, and two roles
     # Rookwright's management account (537695480935) uses to manage it.
