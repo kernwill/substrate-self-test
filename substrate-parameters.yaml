@@ -46,6 +46,9 @@ access:
     # The monthly incident drill: may only create GuardDuty sample
     # findings.
     - arn:aws:iam::632839731153:role/substrate-incident-drill
+    # AWS Backup's service role: takes the daily snapshots and runs the
+    # weekly restore tests (AWS's own managed backup and restore policies).
+    - arn:aws:iam::632839731153:role/substrate-backup
     # Created by AWS when the account joined Rookwright's organization:
     # console access through AWS's account-access service, and two roles
     # Rookwright's management account (537695480935) uses to manage it.
