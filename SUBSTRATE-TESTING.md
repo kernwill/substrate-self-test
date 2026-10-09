@@ -417,6 +417,14 @@ were present, never the values. Records an AWS service or Okta made on
 its own, with no client, are counted but not judged. Reading CloudTrail
 records needs `cloudtrail:LookupEvents` in the collector role.
 
+The `access` section lists who is authorized for security access
+(`ac-6.1`). Substrate names everyone who actually holds it: IAM users
+and roles allowed any action on the declared AWS security services
+(read from `iam:GetAccountAuthorizationDetails`), every Okta admin
+(from the System Log replay), and GitHub collaborators with write
+access or above. Anyone not declared fails the control. AWS
+service-linked roles are counted but not judged.
+
 The Okta Account Management Policy's catch-all rule can't be edited,
 so the rule "Require phishing-resistant for everyone" sits above it,
 matching every sign-in. Substrate reports the catch-all as unreachable

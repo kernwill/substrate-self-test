@@ -28,3 +28,31 @@ audit:
   # checks a sample of real records from CloudTrail in each declared
   # Region and from the Okta System Log.
   additional_fields: [request_id, source_address, user_agent]
+access:
+  # Who is authorized to use security functions or reach
+  # security-relevant information (ac-6.1). Substrate fails the control
+  # if anyone else holds such access.
+  #
+  # AWS: an action on any of these services counts as security access.
+  aws_security_services: [access-analyzer, cloudtrail, config, guardduty, iam, inspector2, kms, macie2, organizations, securityhub, sso]
+  aws:
+    # Terraform and the administrator.
+    - arn:aws:iam::632839731153:user/substrate-admin
+    # Substrate's read-only collector (reads security settings).
+    - arn:aws:iam::632839731153:role/substrate-collector
+    # Created by AWS when the account joined Rookwright's organization:
+    # console access through AWS's account-access service, and two roles
+    # Rookwright's management account (537695480935) uses to manage it.
+    - arn:aws:iam::632839731153:role/managed/AccountFullAccessRole
+    - arn:aws:iam::632839731153:role/managed/AWSManagedAccountManagementAccessRole
+    - arn:aws:iam::632839731153:role/managed/AWSManagedAdvancedFeaturesActivationRole
+  okta:
+    # The administrator (Super Administrator).
+    - will+1234@rookwright.com
+    # Substrate's collector app (Read-only Administrator).
+    - 0oa18e2pm9kK4q9K3698
+  github:
+    # The administrator (admin) and the independent reviewer (write,
+    # so his approvals satisfy branch protection).
+    - kernwill
+    - elliskern
