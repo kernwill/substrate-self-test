@@ -229,6 +229,15 @@ resource "aws_sqs_queue_policy" "incident_dlq" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
+      # SQS's endpoint answers plain HTTP (seen 2026-10-09); refuse it
+      # for this queue, as the S3 buckets do.
+      Sid       = "DenyInsecureTransport"
+      Effect    = "Deny"
+      Principal = "*"
+      Action    = "sqs:*"
+      Resource  = aws_sqs_queue.incident_dlq.arn
+      Condition = { Bool = { "aws:SecureTransport" = "false" } }
+      }, {
       Sid       = "EventBridgeDeadLetters"
       Effect    = "Allow"
       Principal = { Service = "events.amazonaws.com" }

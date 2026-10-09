@@ -471,3 +471,21 @@ rm -f "$f"
 ```
 
 The token expires; set a new one the same way before it does.
+
+## TLS probes
+
+`collect-tls` probes every declared component's endpoints with no
+credentials: Okta's org, github.com and api.github.com, and each AWS
+service in `transmission.aws_services` in each declared Region.
+
+```
+../substrate/bin/substrate collect-tls --boundary substrate-boundary.yaml \
+  --parameters substrate-parameters.yaml --out /tmp/self-test-tls.json
+```
+
+Pass the result to compile with `--tls /tmp/self-test-tls.json`. Each
+endpoint must negotiate TLS 1.2 or newer with an AEAD cipher, refuse
+TLS 1.0 and 1.1, and present a certificate valid for its name. Okta's
+and GitHub's must also refuse plain HTTP or redirect it to HTTPS. At
+shared AWS endpoints, plain HTTP is refused per resource instead, by
+the bucket and queue policies here.
