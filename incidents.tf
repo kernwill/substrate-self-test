@@ -92,8 +92,18 @@ resource "aws_cloudwatch_event_rule" "guardduty_findings" {
     detail = {
       severity = [{ numeric = [">=", 4] }]
       service = {
-        count          = [1]
-        additionalInfo = { sample = [{ exists = false }] }
+        count = [1]
+        # Not a sample finding. GuardDuty documents the event's detail as
+        # the GetFindings object, where a sample is marked inside the
+        # additionalInfo.value JSON string ("sample":true, seen live
+        # 2026-10-09); either form is excluded. Both patterns were
+        # checked with test-event-pattern against both forms.
+        additionalInfo = {
+          "$or" = [
+            { sample = [{ exists = false }], value = [{ exists = false }] },
+            { sample = [{ exists = false }], value = [{ "anything-but" = { wildcard = "*\"sample\":true*" } }] },
+          ]
+        }
       }
     }
   })
@@ -124,7 +134,14 @@ resource "aws_cloudwatch_event_rule" "guardduty_drills" {
     source        = ["aws.guardduty"]
     "detail-type" = ["GuardDuty Finding"]
     detail = {
-      service = { additionalInfo = { sample = [true] } }
+      service = {
+        additionalInfo = {
+          "$or" = [
+            { sample = [true] },
+            { value = [{ wildcard = "*\"sample\":true*" }] },
+          ]
+        }
+      }
     }
   })
 }
