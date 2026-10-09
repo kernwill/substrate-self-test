@@ -76,3 +76,6 @@ incidents:
   min_guardduty_severity: 4
   max_minutes_to_issue: 15
   alert_recipients: [kernwill]
+  # Incident events EventBridge couldn't deliver to GitHub (incidents.tf).
+  # Any message here is an incident with no record (ir-5, ir-4.1).
+  dead_letter_queues: [substrate-incident-issues-dlq]
