@@ -53,7 +53,10 @@ resource "aws_s3_bucket_policy" "tfstate" {
 
 # --- si-7: GitHub Actions reaches AWS by OIDC. Only workflows running
 # on main, which changes only through a reviewed pull request, can
-# assume the role. ---
+# assume the role. GitHub's token subject names the owner and repository
+# with their immutable IDs (kernwill = 66508, substrate-self-test =
+# 1408966262; seen in CloudTrail 2026-10-09), so a repository recreated
+# under the same name couldn't assume it. ---
 resource "aws_iam_openid_connect_provider" "github" {
   url            = "https://token.actions.githubusercontent.com"
   client_id_list = ["sts.amazonaws.com"]
@@ -70,7 +73,7 @@ resource "aws_iam_role" "drift_check" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:kernwill/substrate-self-test:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main"
         }
       }
     }]

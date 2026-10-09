@@ -59,3 +59,12 @@ access:
     # so his approvals satisfy branch protection).
     - kernwill
     - elliskern
+integrity:
+  # The nightly check for changes made outside a reviewed pull request
+  # (si-7). check runs terraform plan; report-drift runs only when the
+  # live account differs from main and opens an incident issue. At most
+  # 26 hours between successful checks: nightly, with slack (si-7.1).
+  workflow: .github/workflows/drift-check.yml
+  check_job: check
+  report_job: report-drift
+  max_hours_between_checks: 26
