@@ -41,7 +41,8 @@
       "Action": [
         "cloudtrail:DescribeTrails",
         "cloudtrail:GetTrailStatus",
-        "cloudtrail:GetEventSelectors"
+        "cloudtrail:GetEventSelectors",
+        "cloudtrail:LookupEvents"
       ],
       "Resource": "*"
     },

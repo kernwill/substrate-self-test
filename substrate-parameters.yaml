@@ -22,3 +22,9 @@ okta:
   # The Okta profile attribute that records each user's status
   # (employee, contractor and so on), for ia-4.4.
   user_status_attribute: userType
+audit:
+  # Information every audit record of a client request must carry, on
+  # every component that generates audit records (au-3.1). Substrate
+  # checks a sample of real records from CloudTrail in each declared
+  # Region and from the Okta System Log.
+  additional_fields: [request_id, source_address, user_agent]

@@ -345,9 +345,15 @@ Then add the GitHub flags to the collect run:
 
 ```
 ./collect-okta.sh --out /tmp/self-test-runtime \
+  --aws-audit-regions us-east-2,us-west-2 \
   --github-owner kernwill --github-repo substrate-self-test \
   --github-token-path ~/.substrate/github/self-test.token
 ```
+
+`--aws-audit-regions` names every Region the boundary declares. Each
+one's CloudTrail records are sampled for `au-3.1` (see Organization-
+defined parameters); a declared Region left out is reported as not
+judged.
 
 Live result, 2026-10-07: `cm-3`, `cm-3.2`, `cm-5`, `sa-10` and `si-4`
 evidenced, and the boundary's GitHub component reads `covered`.
@@ -402,6 +408,14 @@ policy as privileged or non-privileged (`ia-2.2`, `ia-2.8`) and names
 the profile attribute that records each user's status (`ia-4.4`). A
 new sign-in policy left out of the file makes both sign-in controls
 undetermined until it's classified.
+
+It also declares the extra information every audit record must carry
+(`au-3.1`): the request ID, source address and user agent. Substrate
+samples real records (up to 500 per AWS Region from the last 7 days,
+and the newest 100 from Okta) and keeps only counts of which fields
+were present, never the values. Records an AWS service or Okta made on
+its own, with no client, are counted but not judged. Reading CloudTrail
+records needs `cloudtrail:LookupEvents` in the collector role.
 
 The Okta Account Management Policy's catch-all rule can't be edited,
 so the rule "Require phishing-resistant for everyone" sits above it,
