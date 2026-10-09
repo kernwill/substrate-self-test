@@ -114,6 +114,13 @@ resource "aws_cloudwatch_event_target" "guardduty_findings" {
   target_id = "github-issue"
   arn       = aws_cloudwatch_event_api_destination.github_issues.arn
   role_arn  = aws_iam_role.incident_issues.arn
+  dead_letter_config {
+    arn = aws_sqs_queue.incident_dlq.arn
+  }
+  retry_policy {
+    maximum_event_age_in_seconds = 3600
+    maximum_retry_attempts       = 24
+  }
   input_transformer {
     input_paths = local.guardduty_finding_paths
     # Literal JSON, not jsonencode: jsonencode escapes < and >, which
@@ -151,6 +158,13 @@ resource "aws_cloudwatch_event_target" "guardduty_drills" {
   target_id = "github-issue"
   arn       = aws_cloudwatch_event_api_destination.github_issues.arn
   role_arn  = aws_iam_role.incident_issues.arn
+  dead_letter_config {
+    arn = aws_sqs_queue.incident_dlq.arn
+  }
+  retry_policy {
+    maximum_event_age_in_seconds = 3600
+    maximum_retry_attempts       = 24
+  }
   input_transformer {
     input_paths    = local.guardduty_finding_paths
     input_template = <<-EOT
@@ -179,6 +193,13 @@ resource "aws_cloudwatch_event_target" "cloudtrail_stopped" {
   target_id = "github-issue"
   arn       = aws_cloudwatch_event_api_destination.github_issues.arn
   role_arn  = aws_iam_role.incident_issues.arn
+  dead_letter_config {
+    arn = aws_sqs_queue.incident_dlq.arn
+  }
+  retry_policy {
+    maximum_event_age_in_seconds = 3600
+    maximum_retry_attempts       = 24
+  }
   input_transformer {
     input_paths = {
       name  = "$.detail.eventName"
@@ -190,4 +211,38 @@ resource "aws_cloudwatch_event_target" "cloudtrail_stopped" {
       {"title": "CloudTrail: <name>", "body": "<name> was called by <who> at <time>.\n\nCloudTrail event ID: <event>\n\nOpened automatically by EventBridge rule substrate-incident-cloudtrail-stopped.", "labels": ["incident", "cloudtrail"], "assignees": ["kernwill"]}
     EOT
   }
+}
+
+# --- Failed deliveries are kept, never lost. EventBridge retries
+# temporary failures for an hour; anything it can't deliver (GitHub
+# refusing the token, say) lands here with the error GitHub returned,
+# in the message attributes ERROR_CODE and ERROR_MESSAGE. Found
+# 2026-10-09: the first drills failed silently. ---
+resource "aws_sqs_queue" "incident_dlq" {
+  name                      = "substrate-incident-issues-dlq"
+  message_retention_seconds = 1209600 # 14 days, SQS's maximum
+  sqs_managed_sse_enabled   = true
+}
+
+resource "aws_sqs_queue_policy" "incident_dlq" {
+  queue_url = aws_sqs_queue.incident_dlq.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid       = "EventBridgeDeadLetters"
+      Effect    = "Allow"
+      Principal = { Service = "events.amazonaws.com" }
+      Action    = "sqs:SendMessage"
+      Resource  = aws_sqs_queue.incident_dlq.arn
+      Condition = {
+        ArnEquals = {
+          "aws:SourceArn" = [
+            aws_cloudwatch_event_rule.guardduty_findings.arn,
+            aws_cloudwatch_event_rule.guardduty_drills.arn,
+            aws_cloudwatch_event_rule.cloudtrail_stopped.arn,
+          ]
+        }
+      }
+    }]
+  })
 }
