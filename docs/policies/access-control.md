@@ -48,6 +48,13 @@ The duty that must stay separated is **authoring a change** versus
   repository as `substrate-readonly-policy.json`). Only the
   Administrator's IAM user can assume it, and it has no long-lived
   keys.
+- The nightly drift check uses the IAM role `substrate-drift-check`,
+  which only this repository's workflows running on `main` can assume
+  (GitHub OIDC, no stored keys). It reads configuration across the
+  account but no S3 object except the Terraform state, and no secret
+  value.
+- Terraform state is kept in a versioned, encrypted S3 bucket that
+  refuses non-TLS requests.
 
 ## Known deviations
 

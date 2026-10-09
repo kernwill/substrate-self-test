@@ -40,6 +40,9 @@ access:
     - arn:aws:iam::632839731153:user/substrate-admin
     # Substrate's read-only collector (reads security settings).
     - arn:aws:iam::632839731153:role/substrate-collector
+    # The nightly drift check (GitHub Actions on main, by OIDC): reads
+    # configuration, never data.
+    - arn:aws:iam::632839731153:role/substrate-drift-check
     # Created by AWS when the account joined Rookwright's organization:
     # console access through AWS's account-access service, and two roles
     # Rookwright's management account (537695480935) uses to manage it.
