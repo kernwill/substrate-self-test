@@ -85,3 +85,21 @@ incidents:
   # Incident events EventBridge couldn't deliver to GitHub (incidents.tf).
   # Any message here is an incident with no record (ir-5, ir-4.1).
   dead_letter_queues: [substrate-incident-issues-dlq]
+incident_drills:
+  # A drill at least monthly (ir-3), each acknowledged within 3 days by
+  # closing its issue with a comment (continuous-monitoring.md).
+  max_days_between_drills: 35
+  acknowledge_within_hours: 72
+  acknowledgers: [kernwill]
+contingency_tests:
+  # The weekly restore test of the database (cp-4, cp-9.1, cp-10;
+  # contingency-plan.md): RTO 4 hours, RPO 24 hours, each test reviewed
+  # within 3 days.
+  restore_testing_plan: substrate_self_test_weekly
+  protected_resources:
+    - arn:aws:rds:us-east-2:632839731153:db:substrate-self-test
+  max_days_between_tests: 8
+  recovery_time_objective_hours: 4
+  recovery_point_objective_hours: 24
+  review_within_hours: 72
+  reviewers: [kernwill]
