@@ -489,3 +489,25 @@ TLS 1.0 and 1.1, and present a certificate valid for its name. Okta's
 and GitHub's must also refuse plain HTTP or redirect it to HTTPS. At
 shared AWS endpoints, plain HTTP is refused per resource instead, by
 the bucket and queue policies here.
+
+## Substrate in CI (cm-4.2)
+
+`.github/workflows/substrate.yml` runs substrate itself:
+
+- **On every pull request** (`substrate`, a required check): a static
+  compile of the declared configuration, gated against
+  `substrate-baseline-pr.json`. A regression fails the check.
+- **After every merge to `main`** (`substrate-live`): a full collect,
+  compile and gate against `substrate-baseline-live.json`.
+
+A pull request that changes a result on purpose updates the baseline in
+the same pull request:
+
+```
+../substrate/bin/substrate baseline update --current <out>/ksi_results.json --out substrate-baseline-pr.json
+```
+
+Secrets: `SUBSTRATE_DEPLOY_KEY` (read-only, rookwright/substrate),
+`OKTA_ORG_URL`, `OKTA_CLIENT_ID`, `OKTA_KEY_ID`, `OKTA_PRIVATE_KEY`, and
+`SUBSTRATE_GITHUB_TOKEN` (the read-only collector token; it expires, so
+replace the secret when it does). AWS uses OIDC; no keys are stored.

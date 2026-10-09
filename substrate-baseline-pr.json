@@ -1,0 +1,328 @@
+{
+  "schema_version": "1",
+  "approved_at": "2026-10-09T20:37:08.441634Z",
+  "approved_by": "Will Kern <kernwill@yahoo.com>",
+  "git_commit": "b4083ce8e1b4a5ec962a973ae84110632fcdbe6a",
+  "results": [
+    {
+      "indicator": "KSI-CED-RAT",
+      "family": "CED",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"at-2\", \"at-2.2\", \"at-2.3\", \"at-3\", \"at-3.5\", \"at-4\", \"cp-3\", \"ir-2\", \"ir-2.3\", \"ps-6\", \"sr-11.1\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CMT-LMC",
+      "family": "CMT",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"au-2 (statement part(s): a, b, d, e)\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CMT-RMV",
+      "family": "CMT",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"cm-3\", \"cm-5\", \"cm-6\", \"si-3\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-CMT-RVP",
+      "family": "CMT",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"cm-3.4\", \"cm-9\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CMT-VTD",
+      "family": "CMT",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"si-2\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CNA-DFP",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"si-3\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-CNA-EIS",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ca-2.1\", \"ca-7.1\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CNA-IBP",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-17.3\", \"pl-10\"]; of those, needing a human attestation rather than a collector: [\"pl-10\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-CNA-MAT",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-17.3\", \"ac-18.1\", \"ac-18.3\", \"ac-20.1\", \"ca-9\", \"sc-10\", \"sc-7.3\", \"sc-7.4\", \"sc-7.8\", \"sc-8\", \"si-10\", \"si-11\", \"si-16\"]; of those, needing a human attestation rather than a collector: [\"ac-18.1\", \"ac-18.3\", \"ac-20.1\", \"si-10\", \"si-11\", \"si-16\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-CNA-OFA",
+      "family": "CNA",
+      "status": "not_applicable",
+      "reason": "indicator has no associated controls in the vendored dataset"
+    },
+    {
+      "indicator": "KSI-CNA-RNT",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-17.3\", \"ca-9\", \"cm-7.1\", \"si-8\"]; of those, needing a human attestation rather than a collector: [\"si-8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-CNA-RVP",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"si-8\", \"si-8.2\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-CNA-ULN",
+      "family": "CNA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"sc-4\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-IAM-AAM",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-2.13\", \"ac-2.2\", \"ia-12\", \"ia-12.2\", \"ia-12.3\", \"ia-12.5\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-IAM-APM",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-2\", \"ia-2\", \"ia-2.1\", \"ia-2.2\", \"ia-2.8\", \"ia-5\", \"ia-5.1\", \"ia-5.2\", \"ia-5.6\", \"ia-6\", \"ia-8\", \"sc-23\"]; of those, needing a human attestation rather than a collector: [\"ia-5.6\", \"ia-6\", \"ia-8\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-IAM-ELP",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-12\", \"ac-14\", \"ac-17\", \"ac-17.1\", \"ac-17.2\", \"ac-17.3\", \"ac-2.5\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"ac-4\", \"cm-2.7\", \"cm-9\", \"ia-11\", \"ia-2\", \"ia-3\", \"ia-4\", \"ia-4.4\", \"ia-5.2\", \"ia-5.6\", \"ps-2\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-20\", \"sc-21\", \"sc-22\", \"sc-23\", \"sc-39\", \"sc-4\", \"si-3\"]; of those, needing a human attestation rather than a collector: [\"ac-14\", \"ac-17\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"cm-2.7\", \"cm-9\", \"ia-5.6\", \"ps-2\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-39\", \"sc-4\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-IAM-JIT",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-17\", \"ac-2\", \"ac-2.1\", \"ac-2.2\", \"ac-2.3\", \"ac-2.4\", \"ac-2.6\", \"ac-20.1\", \"ac-4\", \"ac-5\", \"ac-6.1\", \"ac-6.10\", \"ac-6.2\", \"ac-6.5\", \"ac-6.7\", \"ac-6.9\", \"ac-7\", \"au-9.4\", \"cm-5\", \"cm-7.2\", \"cm-7.5\", \"cm-9\", \"ia-4\", \"ia-4.4\", \"ia-7\", \"ps-2\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ps-9\", \"ra-5.5\", \"sc-2\", \"sc-23\", \"sc-39\"]; of those, needing a human attestation rather than a collector: [\"ac-17\", \"ac-2.2\", \"ac-2.6\", \"ac-20.1\", \"ac-5\", \"ac-6.10\", \"ac-6.2\", \"cm-9\", \"ia-7\", \"ps-2\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ps-9\", \"ra-5.5\", \"sc-2\", \"sc-39\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"ac-6.1\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"], \"ac-6.9\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"], \"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-IAM-SNU",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-2.2\", \"ra-5.5\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-IAM-SUS",
+      "family": "IAM",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-2.13\", \"ps-4\", \"ps-8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-INR-AAR",
+      "family": "INR",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ir-4\", \"ir-8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-INR-RIR",
+      "family": "INR",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ir-4\", \"ir-6\", \"ir-6.3\", \"ir-7\", \"ir-8\", \"ir-8.1\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-INR-RPI",
+      "family": "INR",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ir-4\", \"ir-8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-MLA-ALA",
+      "family": "MLA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"si-11\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-MLA-EVC",
+      "family": "MLA",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ca-7\", \"cm-6\", \"si-7.7\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-MLA-LET",
+      "family": "MLA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-20.1\", \"au-2 (statement part(s): a, b, d, e)\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"ac-6.9\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-MLA-OSM",
+      "family": "MLA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-20.1\", \"au-2 (statement part(s): a, b, d, e)\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"au-11\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"], \"au-3\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"], \"au-3.1\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"], \"au-8\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-MLA-RVL",
+      "family": "MLA",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"au-2 (statement part(s): a, b, d, e)\", \"au-6 (statement part(s): b, c)\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"ac-6.9\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-PIY-GIV",
+      "family": "PIY",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"cm-12\", \"cm-12.1\", \"cm-2.2\", \"cm-7.5\", \"cp-2.8\"]; of those, needing a human attestation rather than a collector: [\"cm-12\", \"cp-2.8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-PIY-RES",
+      "family": "PIY",
+      "status": "not_applicable",
+      "reason": "indicator has no associated controls in the vendored dataset"
+    },
+    {
+      "indicator": "KSI-PIY-RIS",
+      "family": "PIY",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-5\", \"ca-2\", \"cp-2.1\", \"cp-4.1\", \"ir-3.2\", \"pm-3\", \"sa-2\", \"sa-3\", \"sr-2.1\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-PIY-RSD",
+      "family": "PIY",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-5\", \"au-3.3\", \"cm-3.4\", \"pl-8\", \"pm-7\", \"sa-3\", \"sa-8\", \"sc-18\", \"sc-4\", \"si-10\", \"si-11\", \"si-16\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-PIY-RVD",
+      "family": "PIY",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-RPL-ABO",
+      "family": "RPL",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"cp-10\", \"cp-10.2\", \"cp-6\", \"si-12\"]; of those, needing a human attestation rather than a collector: [\"si-12\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-RPL-ARP",
+      "family": "RPL",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"cp-2\", \"cp-2.1\", \"cp-2.3\", \"cp-4.1\", \"cp-6.3\", \"cp-7.2\", \"cp-7.3\", \"cp-8\", \"cp-8.1\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-RPL-RRO",
+      "family": "RPL",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"cp-2.3\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-RPL-TRC",
+      "family": "RPL",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"cp-2.1\", \"cp-2.3\", \"cp-4.1\", \"ir-3.2\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SCR-MIT",
+      "family": "SCR",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-20\", \"ca-7.4\", \"ra-3.1\", \"sa-10 (statement part(s): d, e)\", \"sa-11\", \"sa-15.3\", \"sa-9\", \"sc-18\", \"sr-5\", \"sr-6\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SCR-MON",
+      "family": "SCR",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ac-20\", \"ca-3\", \"ir-6.3\", \"ps-7\", \"sa-9\", \"si-5\", \"sr-5\", \"sr-6\", \"sr-8\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-ACM",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-2.4\", \"cm-2.2\", \"cm-6\", \"cm-7.1\", \"pl-10\", \"pl-9\", \"sa-5\", \"si-5\", \"sr-10\"]; of those, needing a human attestation rather than a collector: [\"pl-10\", \"sa-5\", \"si-5\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-SVC-ASM",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"ia-5.6\", \"sc-17 (statement part(s): b)\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-EIS",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"pl-8\", \"sc-39\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-PRR",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"sc-4\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-RUD",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"si-12.3\", \"si-18.4\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-SIN",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "missing IR evidence for control(s): [\"ac-1\", \"ac-17.2\", \"cp-9.8\", \"sc-13\", \"sc-20\", \"sc-21\", \"sc-22\", \"sc-23\", \"sc-28\", \"sc-8\", \"sc-8.1\"]; of those, needing a human attestation rather than a collector: [\"ac-1\", \"sc-13\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"], \"sc-8.1\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+    },
+    {
+      "indicator": "KSI-SVC-VCM",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; whole-system control(s) judged against the declared boundary, not covered for: {\"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    },
+    {
+      "indicator": "KSI-SVC-VRI",
+      "family": "SVC",
+      "status": "undetermined",
+      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"sc-13\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"sc-23\": [\"aws:632839731153/us-east-2\", \"aws:632839731153/us-west-2\", \"github:kernwill/substrate-self-test\", \"okta:https://integrator-2677113.okta.com\"]}",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+    }
+  ]
+}
