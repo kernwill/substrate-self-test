@@ -47,6 +47,12 @@
       "Resource": "*"
     },
     {
+      "Sid": "SubstrateBackupRestoreTesting",
+      "Effect": "Allow",
+      "Action": ["backup:ListRestoreJobs", "backup:ListBackupVaults", "backup:ListRecoveryPointsByBackupVault"],
+      "Resource": "*"
+    },
+    {
       "Sid": "SubstrateSQSQueueDepths",
       "Effect": "Allow",
       "Action": ["sqs:ListQueues", "sqs:GetQueueAttributes"],
