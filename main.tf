@@ -1,4 +1,17 @@
 terraform {
+  # State lives in a versioned S3 bucket (drift.tf), so every previous
+  # version of the baseline configuration is kept (cm-2.3). Literal
+  # values: a backend can't use variables, and substrate links this
+  # bucket to its versioning by name. use_lockfile locks with an S3
+  # object, so no DynamoDB table is needed.
+  backend "s3" {
+    bucket       = "substrate-self-test-tfstate-632839731153"
+    key          = "self-test/terraform.tfstate"
+    region       = "us-east-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
