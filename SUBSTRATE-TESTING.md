@@ -448,3 +448,26 @@ choice).
   `cmd/substrate/gate_test.go`), but won't visibly fire against this
   fixture until enough coverage exists for at least one indicator to
   reach `satisfied` in the first place.
+
+## Incident issues
+
+`incidents.tf` makes EventBridge open a GitHub issue (labelled
+`incident`, assigned to the Administrator) for every new GuardDuty
+finding of Medium severity or above and for CloudTrail being stopped or
+deleted. Sample findings from drills are labelled `drill`.
+
+The GitHub token is never in Terraform. After the first apply, set it on
+the EventBridge connection once, from a fine-grained token limited to
+this repository with only Issues: Read and write, saved at
+`~/.substrate/github/issues-writer.token`:
+
+```
+umask 077; f=$(mktemp)
+jq -n --rawfile t ~/.substrate/github/issues-writer.token \
+  '{ApiKeyAuthParameters: {ApiKeyName: "Authorization", ApiKeyValue: ("Bearer " + ($t | rtrimstr("\n")))}}' > "$f"
+aws events update-connection --name substrate-self-test-github \
+  --authorization-type API_KEY --auth-parameters "file://$f" --query ConnectionState
+rm -f "$f"
+```
+
+The token expires; set a new one the same way before it does.
