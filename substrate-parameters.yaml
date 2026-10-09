@@ -68,3 +68,11 @@ integrity:
   check_job: check
   report_job: report-drift
   max_hours_between_checks: 26
+incidents:
+  # A GuardDuty finding of Medium severity (4.0) or above is an incident
+  # (ir-5). Its issue must be opened automatically within 15 minutes
+  # (ir-4.1) and assigned to the Administrator, whom GitHub notifies
+  # (si-4.5).
+  min_guardduty_severity: 4
+  max_minutes_to_issue: 15
+  alert_recipients: [kernwill]
