@@ -89,5 +89,5 @@ jobs:
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
           else
-            gh issue create --title "Drift: live AWS differs from main" --label drift --label incident --body "$body"
+            gh issue create --title "Drift: live AWS differs from main" --label drift --label incident --assignee kernwill --body "$body"
           fi
