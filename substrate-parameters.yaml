@@ -103,3 +103,8 @@ contingency_tests:
   recovery_point_objective_hours: 24
   review_within_hours: 72
   reviewers: [kernwill]
+transmission:
+  # The AWS services the system uses, probed at
+  # <service>.<region>.amazonaws.com in each declared Region for TLS
+  # (sc-8.1, sc-23). Okta's org and GitHub come from the boundary.
+  aws_services: [backup, cloudtrail, config, events, guardduty, kms, logs, rds, s3, secretsmanager, securityhub, sqs, sts]
