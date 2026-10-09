@@ -201,11 +201,26 @@ resource "aws_iam_role" "substrate_collector" {
   name = "substrate-collector"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/substrate-admin" }
-      Action    = "sts:AssumeRole"
-    }]
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/substrate-admin" }
+        Action    = "sts:AssumeRole"
+      },
+      # The post-merge substrate run (cm-4.2): this repository's
+      # workflows on main only, by GitHub OIDC (subject as in drift.tf).
+      {
+        Effect    = "Allow"
+        Principal = { Federated = aws_iam_openid_connect_provider.github.arn }
+        Action    = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" = "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main"
+          }
+        }
+      },
+    ]
   })
 }
 

@@ -55,6 +55,12 @@ The duty that must stay separated is **authoring a change** versus
   value.
 - Terraform state is kept in a versioned, encrypted S3 bucket that
   refuses non-TLS requests.
+- After every merge to `main`, a GitHub Actions job runs substrate
+  against the live system (cm-4.2). It reaches AWS through the
+  read-only `substrate-collector` role by OIDC, from `main` only, and
+  holds the Okta collector app's key and the read-only GitHub token as
+  Actions secrets, which pull requests from forks never receive.
+  Substrate's source is read with a read-only deploy key.
 
 ## Known deviations
 

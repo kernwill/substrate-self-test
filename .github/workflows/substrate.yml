@@ -1,0 +1,122 @@
+name: substrate
+
+# Substrate verifies this repository's controls after every change
+# (cm-4.2). On a pull request, the "substrate" job compiles the declared
+# configuration and gates it against substrate-baseline-pr.json: a
+# regression fails the required check, so the change can't merge. After
+# a merge to main, "substrate-live" collects the live system with
+# read-only access and gates it against substrate-baseline-live.json.
+#
+# The repository is public, so nothing but the gate's one-line verdict
+# is printed: no reports, identities or artifacts are published.
+# Substrate is private; it is built from a pinned commit with a
+# read-only deploy key.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: substrate-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SUBSTRATE_COMMIT: a13eb6aec25cb99f2da0850df2b29828bad1bd16
+
+jobs:
+  verify:
+    name: substrate
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rookwright/substrate
+          ref: ${{ env.SUBSTRATE_COMMIT }}
+          ssh-key: ${{ secrets.SUBSTRATE_DEPLOY_KEY }}
+          path: .substrate-src
+          persist-credentials: false
+      - name: Move substrate out of the scanned tree
+        run: mv .substrate-src "$RUNNER_TEMP/substrate-src"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ runner.temp }}/substrate-src/go.mod
+          cache: false
+      - name: Build substrate
+        run: cd "$RUNNER_TEMP/substrate-src" && go build -trimpath -o "$RUNNER_TEMP/substrate" ./cmd/substrate
+      - name: Compile and gate the declared configuration
+        run: |
+          "$RUNNER_TEMP/substrate" compile --source . --boundary substrate-boundary.yaml \
+            --parameters substrate-parameters.yaml --out "$RUNNER_TEMP/out" > "$RUNNER_TEMP/compile.log" 2>&1 \
+            || { echo "substrate compile failed"; exit 2; }
+          "$RUNNER_TEMP/substrate" gate --baseline substrate-baseline-pr.json --current "$RUNNER_TEMP/out/ksi_results.json"
+
+  verify-live:
+    name: substrate-live
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rookwright/substrate
+          ref: ${{ env.SUBSTRATE_COMMIT }}
+          ssh-key: ${{ secrets.SUBSTRATE_DEPLOY_KEY }}
+          path: .substrate-src
+          persist-credentials: false
+      - name: Move substrate out of the scanned tree
+        run: mv .substrate-src "$RUNNER_TEMP/substrate-src"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ runner.temp }}/substrate-src/go.mod
+          cache: false
+      - name: Build substrate
+        run: cd "$RUNNER_TEMP/substrate-src" && go build -trimpath -o "$RUNNER_TEMP/substrate" ./cmd/substrate
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::632839731153:role/substrate-collector
+          aws-region: us-east-2
+          role-session-name: substrate-live-${{ github.run_id }}
+      - name: Collect, compile and gate the live system
+        env:
+          OKTA_ORG_URL: ${{ secrets.OKTA_ORG_URL }}
+          OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
+          OKTA_KEY_ID: ${{ secrets.OKTA_KEY_ID }}
+          OKTA_PRIVATE_KEY_PEM: ${{ secrets.OKTA_PRIVATE_KEY }}
+          GITHUB_READ_TOKEN: ${{ secrets.SUBSTRATE_GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          umask 077
+          s="$RUNNER_TEMP/substrate"; t="$RUNNER_TEMP"
+          printf '%s\n' "$OKTA_PRIVATE_KEY_PEM" > "$t/okta.pem"
+          printf '%s' "$GITHUB_READ_TOKEN" > "$t/github.token"
+          quiet() { "$@" > "$t/step.log" 2>&1 || { echo "failed: $1 $2"; exit 2; }; }
+          quiet "$s" collect --out "$t/runtime" --okta-org-url "$OKTA_ORG_URL" --okta-client-id "$OKTA_CLIENT_ID" \
+            --okta-key-id "$OKTA_KEY_ID" --okta-private-key "$t/okta.pem" --aws-audit-regions us-east-2,us-west-2 \
+            --github-owner kernwill --github-repo substrate-self-test --github-token-path "$t/github.token"
+          quiet "$s" collect-documents --dir docs/policies --out "$t/documents.json" \
+            --github-owner kernwill --github-repo substrate-self-test --github-token-path "$t/github.token"
+          quiet "$s" collect-tls --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml --out "$t/tls.json"
+          quiet "$s" collect-security-txt --domain rookwright.com --out "$t/security_txt.json"
+          rm -f "$t/okta.pem" "$t/github.token"
+          quiet "$s" compile --source . --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml \
+            --runtime "$t/runtime" --documents "$t/documents.json" --documents-root . --tls "$t/tls.json" \
+            --security-txt "$t/security_txt.json" --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
+          "$s" gate --baseline substrate-baseline-live.json --current "$t/out/ksi_results.json"
