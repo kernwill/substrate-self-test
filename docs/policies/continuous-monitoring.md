@@ -42,3 +42,16 @@ pull request.
 - Okta's System Log records administrative changes, which substrate
   collects.
 - Comparing successive substrate runs shows what changed between them.
+- Every night, a GitHub Actions job compares the live AWS account with
+  `main` (`terraform plan`, read-only). Any difference opens an issue
+  labelled `drift` and `incident`.
+
+## Incidents
+
+Every new GuardDuty finding of Medium severity or above, and any
+attempt to stop or delete CloudTrail logging, opens a GitHub issue in
+this repository automatically. The issue is labelled `incident` and
+assigned to the Administrator, and GitHub notifies them. The issue is
+the incident's record: it is worked and closed with a comment saying
+what was done. GuardDuty sample findings from drills open issues
+labelled `drill` too, and are never counted as real incidents.
