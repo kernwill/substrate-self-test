@@ -1,0 +1,93 @@
+name: Drift check
+
+# Every night, compare the live AWS account with main (si-7, si-7.1).
+# Any difference is a change made outside a reviewed pull request: the
+# job opens an issue labelled drift and incident (si-7.7), or comments
+# on the one already open. The plan itself is never printed, since this
+# repository is public; only the changed resource addresses are.
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: drift-check
+  cancel-in-progress: false
+
+jobs:
+  # Two jobs so the result is readable from GitHub's API without logs:
+  # report-drift runs only when check found drift, and succeeds only
+  # once the issue is opened or updated.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      drift: ${{ steps.plan.outputs.drift }}
+      changed: ${{ steps.plan.outputs.changed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.4
+          terraform_wrapper: false
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::632839731153:role/substrate-drift-check
+          aws-region: us-east-2
+          role-session-name: drift-check-${{ github.run_id }}
+      - name: Plan
+        id: plan
+        # -lock=false: the role is read-only and plan writes nothing.
+        # Exit code 0 is no drift, 2 is drift, anything else is an error.
+        run: |
+          terraform init -input=false -no-color > /dev/null
+          set +e
+          terraform plan -input=false -lock=false -no-color -detailed-exitcode -out=drift.plan > /dev/null 2> plan.err
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then
+            echo "terraform plan failed (exit $code)"
+            grep -E '^(Error|│ Error)' plan.err | head -20 || true
+            exit 1
+          fi
+          if [ "$code" -eq 2 ]; then
+            changed="$(terraform show -json drift.plan | jq -c '[.resource_changes[] | select(.change.actions != ["no-op"]) | {address, actions: .change.actions}]')"
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            echo "changed=$changed" >> "$GITHUB_OUTPUT"
+            echo "Drift found:"
+            echo "$changed" | jq -r '.[] | "- \(.address): \(.actions | join(", "))"'
+          else
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "No drift."
+          fi
+
+  report-drift:
+    needs: check
+    if: needs.check.outputs.drift == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the drift issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          CHANGED: ${{ needs.check.outputs.changed }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create drift --color B60205 --description "Live AWS differs from main" --force > /dev/null
+          gh label create incident --color D93F0B --description "Tracked as a security incident" --force > /dev/null
+          list="$(echo "$CHANGED" | jq -r '.[] | "- `\(.address)`: \(.actions | join(", "))"')"
+          body="$(printf 'The nightly drift check found resources that differ from `main` ([run](%s)):\n\n%s\n\nEither reverse the change or bring it into `main` through a reviewed pull request.' "$RUN_URL" "$list")"
+          existing="$(gh issue list --label drift --state open --json number --jq '.[0].number')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "Drift: live AWS differs from main" --label drift --label incident --body "$body"
+          fi
