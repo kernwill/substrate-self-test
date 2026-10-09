@@ -47,6 +47,12 @@
       "Resource": "*"
     },
     {
+      "Sid": "SubstrateSQSQueueDepths",
+      "Effect": "Allow",
+      "Action": ["sqs:ListQueues", "sqs:GetQueueAttributes"],
+      "Resource": "*"
+    },
+    {
       "Sid": "SubstrateSecurityGroupsCollector",
       "Effect": "Allow",
       "Action": ["ec2:DescribeSecurityGroups"],
