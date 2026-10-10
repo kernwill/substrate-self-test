@@ -1,8 +1,8 @@
 {
   "schema_version": "1",
-  "approved_at": "2026-10-09T20:35:57.617067Z",
+  "approved_at": "2026-10-10T20:22:36.470479Z",
   "approved_by": "Will Kern <kernwill@yahoo.com>",
-  "git_commit": "3dba5ec7c10d537a734e7c88fafb37ca088f039f",
+  "git_commit": "453b1f3901178595c46248a5a44e02affbfa13d2",
   "results": [
     {
       "indicator": "KSI-CED-RAT",
@@ -15,7 +15,7 @@
       "indicator": "KSI-CMT-LMC",
       "family": "CMT",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"au-2\", \"cm-4.2\", \"cm-8.3\", \"ma-2\"]; partial evidence only, not counted toward coverage: [\"au-2 (statement part(s): c)\"]; of those, needing a human attestation rather than a collector: [\"au-2 (statement part(s): a, b, d, e)\"]",
+      "reason": "missing IR evidence for control(s): [\"au-2\", \"cm-8.3\", \"ma-2\"]; partial evidence only, not counted toward coverage: [\"au-2 (statement part(s): c)\"]; of those, needing a human attestation rather than a collector: [\"au-2 (statement part(s): a, b, d, e)\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -38,6 +38,8 @@
         "github_actions:.github/workflows/incident-drill.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#component-inventory-update",
+        "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/substrate.yml#permissions#component-inventory-update",
         "kubernetes:Deployment.default/web#container-security-context[0]",
         "kubernetes:Deployment.default/web#container-security-context[0]#baseline-configuration",
         "kubernetes:Deployment.default/web#container-security-context[0]#component-inventory-update",
@@ -79,7 +81,7 @@
       "indicator": "KSI-CMT-VTD",
       "family": "CMT",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cm-4.2\", \"si-2\"]; of those, needing a human attestation rather than a collector: [\"si-2\"]",
+      "reason": "missing IR evidence for control(s): [\"si-2\"]; of those, needing a human attestation rather than a collector: [\"si-2\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -94,6 +96,7 @@
         "github_actions:.github/workflows/drift-check.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/incident-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
         "kubernetes:Deployment.default/web#container-security-context[0]#baseline-configuration",
         "kubernetes:Deployment.default/web#pod-security-context#baseline-configuration",
         "kubernetes:NetworkPolicy.default/web-default-deny#default-deny#baseline-configuration",
@@ -616,7 +619,7 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.6/finding/cacc6836-6127-4801-8e47-0384d3eecd50#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.9/finding/03e59c94-a2d2-45e0-9cc7-d795ab1a61b3#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Autoscaling.5/finding/9003a99f-44bc-4630-8000-0d0c9c9eef0b#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/973590fd-440f-44bf-a173-8018ec44dfa9#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/528c7a58-40ec-4e89-ad3e-f94996d3cb4c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.1/finding/16d15402-7382-457b-b249-c0efb78d2826#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.2/finding/53057b5b-e22a-486e-b4dd-0df555da3952#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.5/finding/07050f16-6d63-4230-844b-79fad160cc1d#finding",
@@ -682,7 +685,7 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.13/finding/a3d0154d-a1f8-4020-a1e1-2bd9c5113528#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.14/finding/12c34c7a-d181-4f90-b1cb-a5b611937f00#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.14/finding/3952e1f9-1382-4d39-a2c4-0362f10cb710#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.15/finding/0e1a2971-ee0b-48ab-9824-885010774ba9#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.15/finding/71108c4d-2d76-4b05-b189-6899ebbc0758#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.16/finding/5599443c-9d39-4ab5-9fa0-21095938186c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.17/finding/ff3d1e44-5bd6-45b2-bd24-ae3523a34f8e#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.170/finding/b7c3f39b-5e1e-44ff-89e5-2ae72e8c6143#finding",
@@ -823,6 +826,7 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/31acfa09-ca34-4816-90ad-21c202fb7fc4#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/41a0a139-5490-4afd-8d2e-e2d0cf600dd7#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/4a4ae91b-d67d-42fb-a19f-75f0391f7c9c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/5474e087-79c5-4e58-a0f2-21f9b2946673#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/5c7a2186-ff12-49f0-bbb6-7a3a846b58f4#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/6a2ecaaf-dfee-4645-9bbb-5129734119d1#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/8771b690-3c75-4fcb-b3bd-d187c7c3a7a0#finding",
@@ -875,6 +879,8 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/0bb421e5-291a-485a-8d88-86a87bcfb5a6#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/1d0ade91-2690-4118-a9d0-bd573d75cb99#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/47a06eff-28d8-4c07-97b8-320e9e958a03#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/a8a401ea-7e8c-42e0-b698-70aa757dc3b0#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/c72eb053-6277-429b-b717-30d90517a804#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/f0255150-2ee2-4113-9fc4-d16a85a5eb68#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.10/finding/8c96c58c-21a2-43a4-81bb-869d86ad0286#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.11/finding/51d7afd4-c90b-4cf9-b38e-791dc90eb383#finding",
@@ -903,6 +909,8 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/05d20b95-e79b-4045-9269-2328fb75f518#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/2436473e-0eda-4848-8281-1a30c75b9cc1#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/6d185858-1022-4159-bd77-1aa9d10a3acb#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/7b441b70-f0b1-44a1-ac62-40fe6aeeff2a#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/c86d3179-a185-4920-83b5-fe45a5d38b97#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/d46ad168-3723-45dc-af2b-927049ff506e#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.40/finding/756baac2-f056-4cdf-8e3c-565a1b9b8ca9#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.41/finding/619085a0-0aa8-439e-932b-f973846fe165#finding",
@@ -1007,6 +1015,7 @@
         "github_actions:.github/workflows/drift-check.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/incident-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
         "kubernetes:Deployment.default/web#container-security-context[0]#baseline-configuration",
         "kubernetes:Deployment.default/web#pod-security-context#baseline-configuration",
         "kubernetes:NetworkPolicy.default/web-default-deny#default-deny#baseline-configuration",
@@ -1084,28 +1093,31 @@
       "indicator": "KSI-RPL-ABO",
       "family": "RPL",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cp-10\", \"si-12\"]; of those, needing a human attestation rather than a collector: [\"si-12\"]",
+      "reason": "missing IR evidence for control(s): [\"si-12\"]; of those, needing a human attestation rather than a collector: [\"si-12\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-RPL-ARP",
       "family": "RPL",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cp-10\", \"cp-2\", \"cp-2.1\", \"cp-4.1\", \"cp-7.3\", \"cp-8\", \"cp-8.1\", \"cp-8.2\"]; of those, needing a human attestation rather than a collector: [\"cp-2\", \"cp-2.1\", \"cp-4.1\", \"cp-7.3\", \"cp-8\", \"cp-8.1\"]",
+      "reason": "missing IR evidence for control(s): [\"cp-2\", \"cp-2.1\", \"cp-4.1\", \"cp-7.3\", \"cp-8\", \"cp-8.1\", \"cp-8.2\"]; of those, needing a human attestation rather than a collector: [\"cp-2\", \"cp-2.1\", \"cp-4.1\", \"cp-7.3\", \"cp-8\", \"cp-8.1\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-RPL-RRO",
       "family": "RPL",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cp-10\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "satisfied",
+      "reason": "all 2 referenced control(s) have IR evidence; of those, verified by policy documents (existence, currency and independent approval - not adequacy, which is the assessor's determination): [\"cp-2.3\"]",
+      "evidence": [
+        "document:docs/policies/contingency-plan.md#cp",
+        "drills:aws-backup#backup_recovery_objectives"
+      ]
     },
     {
       "indicator": "KSI-RPL-TRC",
       "family": "RPL",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cp-10\", \"cp-2.1\", \"cp-4\", \"cp-4.1\", \"cp-9.1\", \"ir-3.2\"]; of those, needing a human attestation rather than a collector: [\"cp-2.1\", \"cp-4.1\", \"ir-3.2\"]",
+      "reason": "missing IR evidence for control(s): [\"cp-2.1\", \"cp-4.1\", \"ir-3.2\"]; of those, needing a human attestation rather than a collector: [\"cp-2.1\", \"cp-4.1\", \"ir-3.2\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
