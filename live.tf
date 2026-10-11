@@ -176,6 +176,35 @@ resource "aws_config_configuration_recorder_status" "main" {
   depends_on = [aws_config_delivery_channel.main]
 }
 
+# The second site's recorder (cm-8.3, pl-9): without it the RDS replica's
+# Region has no inventory, so substrate can't check it. Global resources
+# (IAM) are recorded once, in us-east-2. Deliveries go to the same audit
+# bucket; Config writes across Regions.
+resource "aws_config_configuration_recorder" "west" {
+  provider = aws.west
+  name     = "default"
+  role_arn = aws_iam_service_linked_role.config.arn
+  recording_group {
+    all_supported                 = true
+    include_global_resource_types = false
+  }
+}
+
+resource "aws_config_delivery_channel" "west" {
+  provider       = aws.west
+  name           = "default"
+  s3_bucket_name = aws_s3_bucket.audit.id
+  s3_key_prefix  = "config"
+  depends_on     = [aws_config_configuration_recorder.west, aws_s3_bucket_policy.audit]
+}
+
+resource "aws_config_configuration_recorder_status" "west" {
+  provider   = aws.west
+  name       = aws_config_configuration_recorder.west.name
+  is_enabled = true
+  depends_on = [aws_config_delivery_channel.west]
+}
+
 # --- sc-21: Route 53 Resolver DNSSEC validation on the default VPC. ---
 data "aws_vpc" "default" {
   default = true

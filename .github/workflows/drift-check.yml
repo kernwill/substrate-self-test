@@ -1,6 +1,9 @@
 name: Drift check
 
-# Every night, compare the live AWS account with main (si-7, si-7.1).
+# Every night, compare the live AWS account with main (si-7, si-7.1),
+# and look for AWS resources nothing declared (cm-8.3, pl-9): in AWS
+# Config's inventory but not in Terraform state, not created by AWS, and
+# not a declared exception (substrate-parameters.yaml, inventory).
 # Any difference is a change made outside a reviewed pull request: the
 # job opens an issue labelled drift and incident (si-7.7), or comments
 # on the one already open. The plan itself is never printed, since this
@@ -90,4 +93,98 @@ jobs:
             gh issue comment "$existing" --body "$body"
           else
             gh issue create --title "Drift: live AWS differs from main" --label drift --label incident --assignee kernwill --body "$body"
+          fi
+
+  # cm-8.3: "substrate inventory" compares AWS Config's inventory in both
+  # Regions with Terraform state. Exit 1 means unmanaged resources were
+  # found; report-inventory then opens an incident issue (the declared
+  # action). Only resource types and IDs are printed.
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      unmanaged: ${{ steps.inventory.outputs.unmanaged }}
+      list: ${{ steps.inventory.outputs.list }}
+    env:
+      SUBSTRATE_COMMIT: e196319c282d1a887a97a9bdd5f9d32986a66c9f
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rookwright/substrate
+          ref: ${{ env.SUBSTRATE_COMMIT }}
+          ssh-key: ${{ secrets.SUBSTRATE_DEPLOY_KEY }}
+          path: .substrate-src
+          persist-credentials: false
+      - name: Move substrate out of the scanned tree
+        run: mv .substrate-src "$RUNNER_TEMP/substrate-src"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ runner.temp }}/substrate-src/go.mod
+          cache: false
+      - name: Build substrate
+        run: cd "$RUNNER_TEMP/substrate-src" && go build -trimpath -o "$RUNNER_TEMP/substrate" ./cmd/substrate
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.4
+          terraform_wrapper: false
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::632839731153:role/substrate-drift-check
+          aws-region: us-east-2
+          role-session-name: inventory-${{ github.run_id }}
+      - name: Inventory
+        id: inventory
+        run: |
+          terraform init -input=false -no-color > /dev/null
+          terraform show -json > "$RUNNER_TEMP/show.json"
+          set +e
+          "$RUNNER_TEMP/substrate" inventory --state "$RUNNER_TEMP/show.json" --regions us-east-2,us-west-2 \
+            --parameters substrate-parameters.yaml --out "$RUNNER_TEMP/inventory.json" > "$RUNNER_TEMP/inventory.log" 2>&1
+          code=$?
+          set -e
+          case "$code" in
+            0)
+              echo "unmanaged=false" >> "$GITHUB_OUTPUT"
+              head -1 "$RUNNER_TEMP/inventory.log" ;;
+            1)
+              list="$(jq -c '[.unmanaged[] | {region, type, id}]' "$RUNNER_TEMP/inventory.json")"
+              echo "unmanaged=true" >> "$GITHUB_OUTPUT"
+              echo "list=$list" >> "$GITHUB_OUTPUT"
+              cat "$RUNNER_TEMP/inventory.log" ;;
+            *)
+              echo "substrate inventory failed (exit $code):"
+              tail -5 "$RUNNER_TEMP/inventory.log"
+              exit 1 ;;
+          esac
+
+  report-inventory:
+    needs: inventory
+    if: needs.inventory.outputs.unmanaged == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the inventory issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          LIST: ${{ needs.inventory.outputs.list }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create inventory --color 5319E7 --description "AWS resources outside Terraform" --force > /dev/null
+          gh label create incident --color D93F0B --description "Tracked as a security incident" --force > /dev/null
+          list="$(echo "$LIST" | jq -r '.[] | "- \(.region) `\(.type)` `\(.id)`"')"
+          body="$(printf 'The nightly inventory found AWS resources that Terraform does not manage and that are not declared exceptions ([run](%s)):\n\n%s\n\nDelete each one, bring it into Terraform through a reviewed pull request, or declare it under `inventory.exceptions` in `substrate-parameters.yaml`.' "$RUN_URL" "$list")"
+          existing="$(gh issue list --label inventory --state open --json number --jq '.[0].number')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "Unmanaged AWS resources" --label inventory --label incident --assignee kernwill --body "$body"
           fi

@@ -1,0 +1,47 @@
+name: Privilege review
+
+# Monthly review of who holds privileged access (ac-6.7). The issue lists
+# everyone declared in substrate-parameters.yaml as authorized for
+# security functions (access) or for managing audit logging
+# (audit_management). Substrate already fails ac-6.1 and au-9.4 if anyone
+# else holds that access, so the list is the population. A declared
+# reviewer confirms each still needs it, removes any that doesn't
+# through a pull request, and closes the issue with a comment.
+on:
+  schedule:
+    - cron: "0 15 1 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  open-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Open the review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create privilege-review --color 0E8A16 --description "Monthly review of privileged access (ac-6.7)" --force > /dev/null
+          section() {
+            printf '\n**%s**\n\n' "$1"
+            yq -r "$2 // [] | .[]" substrate-parameters.yaml | sed 's/^/- /'
+          }
+          list="$(
+            section "AWS: security functions" '.access.aws'
+            section "Okta: security functions" '.access.okta'
+            section "GitHub: write access or above" '.access.github'
+            section "AWS: can manage audit logging" '.audit_management.aws'
+            section "Okta: can manage audit logging" '.audit_management.okta'
+          )"
+          body="$(printf 'Monthly privilege review (AC-6(7)). Substrate verifies nightly that no one outside these lists holds this access.\n%s\n\nFor each entry, confirm it still needs the access. Remove any that does not, in the system and in `substrate-parameters.yaml`, through a pull request. Then close this issue with a comment saying what you reviewed and changed.' "$list")"
+          gh issue create --title "Privilege review: $(date -u +%Y-%m)" --label privilege-review \
+            --assignee kernwill --assignee elliskern --body "$body"
