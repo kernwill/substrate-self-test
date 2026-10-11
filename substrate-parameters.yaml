@@ -111,6 +111,12 @@ transmission:
   # <service>.<region>.amazonaws.com in each declared Region for TLS
   # (sc-8.1, sc-23). Okta's org and GitHub come from the boundary.
   aws_services: [backup, cloudtrail, config, events, guardduty, kms, logs, rds, s3, secretsmanager, securityhub, sqs, sts]
+  # How administrators reach the system remotely (ac-17.2): every
+  # component's web console and its API, over the internet. Substrate
+  # adds the consoles to the probes (AWS sign-in and each Region's
+  # console, Okta's Admin Console, github.com) and requires modern,
+  # authenticated encryption on every one.
+  remote_access: [api, web_console]
 # The FedRAMP authorization each component type inherits from
 # (substrate docs/adr/0024). A control counts as inherited only when
 # every declared component's provider provides it, so with Okta and
