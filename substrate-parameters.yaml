@@ -111,3 +111,16 @@ transmission:
   # <service>.<region>.amazonaws.com in each declared Region for TLS
   # (sc-8.1, sc-23). Okta's org and GitHub come from the boundary.
   aws_services: [backup, cloudtrail, config, events, guardduty, kms, logs, rds, s3, secretsmanager, securityhub, sqs, sts]
+# The FedRAMP authorization each component type inherits from
+# (substrate docs/adr/0024). A control counts as inherited only when
+# every declared component's provider provides it, so with Okta and
+# GitHub undeclared (neither is on a FedRAMP-authorized offering)
+# nothing is inherited yet; the report lists what AWS alone would give.
+# The pin is the sha256 of AWS's "FedRAMP Customer Package" PDF from
+# AWS Artifact, downloaded 2026-10-10. The file itself is AWS
+# Confidential and is never committed here; substrate reads it from a
+# local path.
+inheritance:
+  aws:
+    marketplace_id: AGENCYAMAZONEW
+    matrix_sha256: c168532979242286212996c101f564ac331bff9b94f9f5b4dc6897c78043936e
