@@ -15,7 +15,8 @@
         "s3:GetBucketPublicAccessBlock",
         "s3:GetBucketLogging",
         "s3:GetBucketPolicy",
-        "s3:GetLifecycleConfiguration"
+        "s3:GetLifecycleConfiguration",
+        "s3:GetBucketVersioning"
       ],
       "Resource": ["arn:*:s3:::*"]
     },
@@ -99,7 +100,8 @@
       "Action": [
         "config:DescribeConfigurationRecorderStatus",
         "config:DescribeConfigurationRecorders",
-        "config:DescribeComplianceByConfigRule"
+        "config:DescribeComplianceByConfigRule",
+        "config:SelectResourceConfig"
       ],
       "Resource": "*"
     },
