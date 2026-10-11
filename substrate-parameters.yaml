@@ -124,3 +124,44 @@ inheritance:
   aws:
     marketplace_id: AGENCYAMAZONEW
     matrix_sha256: c168532979242286212996c101f564ac331bff9b94f9f5b4dc6897c78043936e
+
+# Who may manage audit logging (au-9.4): change or stop CloudTrail, or
+# delete, redirect or change the retention of CloudWatch Logs groups in
+# AWS; configure log streaming in Okta (Super Administrator only).
+# Substrate fails the control if anyone else can.
+audit_management:
+  aws:
+    # Terraform and the administrator.
+    - arn:aws:iam::632839731153:user/substrate-admin
+    # Rookwright's management account's access to this account, created
+    # by AWS when the account joined the organization.
+    - arn:aws:iam::632839731153:role/managed/AccountFullAccessRole
+  okta:
+    # The administrator (Super Administrator).
+    - will+1234@rookwright.com
+
+# The monthly privilege review (ac-6.7): a workflow opens a
+# privilege-review issue on the 1st; a reviewer closes it with a comment
+# within a week.
+privilege_reviews:
+  max_days_between_reviews: 35
+  review_within_hours: 168
+  reviewers: [elliskern, kernwill]
+
+# The nightly inventory (cm-8.3, pl-9): AWS resources in AWS Config's
+# inventory but neither in Terraform state nor created by AWS. Finding
+# one opens an incident issue. The exceptions are resources deliberately
+# outside Terraform.
+inventory:
+  workflow: .github/workflows/drift-check.yml
+  check_job: inventory
+  report_job: report-inventory
+  max_hours_between_checks: 26
+  exceptions:
+    # The bootstrap administrator: it creates everything else, so it
+    # can't be created by Terraform.
+    - arn:aws:iam::632839731153:user/substrate-admin
+    # Created by AWS when the account joined Rookwright's organization.
+    - arn:aws:iam::632839731153:role/managed/AccountFullAccessRole
+    - arn:aws:iam::632839731153:role/managed/AWSManagedAccountManagementAccessRole
+    - arn:aws:iam::632839731153:role/managed/AWSManagedAdvancedFeaturesActivationRole
