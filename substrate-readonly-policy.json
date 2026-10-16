@@ -173,6 +173,12 @@
       "Effect": "Allow",
       "Action": ["eks:ListClusters", "eks:DescribeCluster"],
       "Resource": "*"
+    },
+    {
+      "Sid": "SubstratePartnerArchiveCollector",
+      "Effect": "Allow",
+      "Action": ["events:ListEventBuses", "events:ListRules", "events:ListTargetsByRule", "logs:DescribeLogGroups", "logs:DescribeLogStreams"],
+      "Resource": "*"
     }
   ]
 }
