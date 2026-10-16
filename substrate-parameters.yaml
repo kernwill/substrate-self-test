@@ -171,3 +171,16 @@ inventory:
     - arn:aws:iam::632839731153:role/managed/AccountFullAccessRole
     - arn:aws:iam::632839731153:role/managed/AWSManagedAccountManagementAccessRole
     - arn:aws:iam::632839731153:role/managed/AWSManagedAdvancedFeaturesActivationRole
+
+# Disposal after retention (si-12.3): every bucket is either disposed of
+# by S3 lifecycle expiration after the days given (retention.tf), or kept
+# with a reason. Old object versions in versioned buckets expire within
+# noncurrent_days of being replaced or deleted.
+disposal:
+  noncurrent_days: 30
+  buckets:
+    substrate-self-test-app-data-632839731153: 365
+    substrate-self-test-app-logs-632839731153: 365
+    substrate-self-test-audit-632839731153: 365
+  keep:
+    substrate-self-test-tfstate-632839731153: Terraform state, the system's own record of what it manages
