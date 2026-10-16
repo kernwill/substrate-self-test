@@ -1,0 +1,78 @@
+name: Control tasks
+
+# The control register's scheduler (substrate ADR 0026). Each day,
+# substrate reads substrate-controls.yaml and the control-task issues,
+# and lists the tasks due. This job then opens each as an issue assigned
+# to its owner. Substrate only reads; the job's own token opens the
+# issues, and issues it opens are the only ones that count. Nothing but
+# the task IDs is printed.
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: control-tasks
+  cancel-in-progress: false
+
+env:
+  SUBSTRATE_COMMIT: d2fdbe34bbef57ecf131a7d148bba5c1871dffa3
+
+jobs:
+  open-due-tasks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      # Full history: substrate reads the register's commit.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: rookwright/substrate
+          ref: ${{ env.SUBSTRATE_COMMIT }}
+          ssh-key: ${{ secrets.SUBSTRATE_DEPLOY_KEY }}
+          path: .substrate-src
+          persist-credentials: false
+      - name: Move substrate out of the checkout
+        run: mv .substrate-src "$RUNNER_TEMP/substrate-src"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ runner.temp }}/substrate-src/go.mod
+          cache: false
+      - name: Build substrate
+        run: cd "$RUNNER_TEMP/substrate-src" && go build -trimpath -o "$RUNNER_TEMP/substrate" ./cmd/substrate
+      - name: List the tasks due
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          umask 077
+          printf '%s' "$GH_TOKEN" > "$RUNNER_TEMP/github.token"
+          "$RUNNER_TEMP/substrate" control-tasks --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" \
+            --github-owner "${GITHUB_REPOSITORY%/*}" --github-repo "${GITHUB_REPOSITORY#*/}" \
+            --github-token-path "$RUNNER_TEMP/github.token" --out "$RUNNER_TEMP/due.json"
+          rm -f "$RUNNER_TEMP/github.token"
+      - name: Open them
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create control-task --color 5319E7 --description "A control register task (substrate-controls.yaml)" --force > /dev/null
+          count="$(jq length "$RUNNER_TEMP/due.json")"
+          for i in $(seq 0 $((count - 1))); do
+            jq -r ".[$i].body" "$RUNNER_TEMP/due.json" > "$RUNNER_TEMP/body.md"
+            task="$(jq -r ".[$i].task" "$RUNNER_TEMP/due.json")"
+            gh label create "task:$task" --color C5DEF5 --force > /dev/null
+            gh issue create --title "$(jq -r ".[$i].title" "$RUNNER_TEMP/due.json")" \
+              --label control-task --label "task:$task" \
+              --assignee "$(jq -r ".[$i].assignee" "$RUNNER_TEMP/due.json")" \
+              --body-file "$RUNNER_TEMP/body.md" > /dev/null
+            echo "opened $task"
+          done
+          echo "$count task(s) opened"

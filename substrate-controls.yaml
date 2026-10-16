@@ -1,0 +1,327 @@
+# The control register (substrate ADR 0026): who manages each control
+# substrate can't verify, how, and how often. Like the parameters file,
+# this is the provider's declaration, changed only through a reviewed
+# pull request.
+#
+# The control-tasks workflow opens each scheduled task as an issue when
+# it comes due. A task counts only when one of its signoff people closes
+# that issue, with a comment, within its time. An issue opened by hand
+# doesn't count. Substrate reports these controls as "managed", never as
+# verified: the record shows the work was done, when and by whom, not
+# that it was done well.
+people:
+  kernwill: Administrator
+  elliskern: Independent Reviewer
+
+tasks:
+  # Frequent tasks.
+  - id: audit-log-review
+    title: Weekly audit log review
+    route: scheduled
+    controls: [au-6, au-6.3]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 7
+    complete_within_days: 7
+    first_due: 2026-10-19
+    checklist:
+      - Review the week's CloudTrail management events in both Regions (us-east-2, us-west-2) for unexpected principals, regions, or IAM, KMS and logging changes.
+      - Review the week's Okta System Log (the archive in CloudWatch Logs, /aws/events/okta-system-log) for failed admin sign-ins, policy changes and new admin role assignments.
+      - Review GuardDuty findings and Security Hub's failed controls opened this week.
+      - Correlate across the three, for example an Okta admin change followed by AWS console activity from the same person.
+      - Open an issue labelled incident for anything that needs follow-up.
+    evidence: A comment listing what was reviewed and anything found, with links to any incident issues opened.
+
+  - id: vulnerability-review
+    title: Monthly vulnerability and advisory review
+    route: scheduled
+    controls: [si-2, si-5, ra-5.5]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 30
+    complete_within_days: 14
+    first_due: 2026-11-02
+    checklist:
+      - Review open Amazon Inspector findings and any Dependabot alerts. For each, record the planned fix or the reason it's accepted, and the date it must be fixed by.
+      - Confirm last month's planned fixes were applied, and link each pull request.
+      - Read the month's CISA Known Exploited Vulnerabilities additions and the AWS, Okta and GitHub security bulletins. Note any that affect this system.
+      - Confirm that only the read-only scanner and collector roles have the privileged access scanning uses (ra-5.5).
+    evidence: A comment with the findings reviewed, the decision on each, and links to the fixing pull requests.
+
+  - id: account-review
+    title: Quarterly account review
+    route: scheduled
+    controls: [ac-2, ac-2.3, ac-2.6, ac-2.13, ac-6.2, ia-4]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 90
+    complete_within_days: 14
+    first_due: 2026-10-20
+    checklist:
+      - List every Okta user, AWS IAM user and role a person can assume, and GitHub collaborator. Confirm each belongs to a current person or a declared service, with the access the access-control policy gives that role.
+      - Disable any account unused for 90 days, and any account of a person who has left (ac-2.3).
+      - Confirm no account is flagged high-risk, and that any that was flagged was disabled within the hour (ac-2.13).
+      - Confirm the Administrator uses a non-privileged account or role for day-to-day work (ac-6.2).
+      - Confirm no identifier was reused for a different person (ia-4).
+    evidence: A comment with the counts reviewed and every change made, linking pull requests for changes made in code.
+
+  - id: personnel-changes-review
+    title: Quarterly review of people who joined, left or changed roles
+    route: scheduled
+    controls: [ps-4, ps-5]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 90
+    complete_within_days: 14
+    first_due: 2026-10-20
+    checklist:
+      - List everyone who left or changed role this quarter. If no one did, say so.
+      - For each person who left, confirm their Okta, AWS and GitHub access was removed on their last day, and that any credentials they knew were rotated.
+      - For each role change, confirm access was changed to match the new role on the day it took effect.
+    evidence: A comment naming each change and the date access was removed or changed, or saying there were none.
+
+  - id: incident-handling-review
+    title: Quarterly incident handling review
+    route: scheduled
+    controls: [ir-4, ir-6, ir-6.1, ir-6.3, ir-7, ir-7.1]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 90
+    complete_within_days: 14
+    first_due: 2026-10-27
+    checklist:
+      - Review every issue labelled incident this quarter. Each was triaged, contained, resolved and closed with a cause.
+      - Confirm any incident that met the reporting threshold in the incident response plan was reported to the agency and to CISA within the plan's deadline. Record where the report was sent.
+      - "Confirm the automated paths still work: GuardDuty findings open incident issues, and the drift check opens one (ir-6.1, ir-7.1)."
+      - Record lessons learned and link the pull request for any change to the plan.
+    evidence: A comment summarizing the quarter's incidents and their reporting, or saying there were none.
+
+  # Yearly tasks, staggered so they don't all open at once.
+  - id: policy-review
+    title: Yearly policy and plan review
+    route: scheduled
+    controls: [ac-1, cm-9, cp-2, cp-2.1, cp-4.1, ir-3.2, ir-8, pm-3, sa-2]
+    owner: kernwill
+    signoff: [elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-11-03
+    checklist:
+      - Read every document in docs/policies against the system as it is today, including the configuration management, contingency and incident response plans.
+      - Confirm the contingency and incident response plans are coordinated with each other, and that the plans' tests are coordinated too (cp-2.1, cp-4.1, ir-3.2).
+      - Confirm security has the time and budget the plans assume (pm-3, sa-2).
+      - Update anything that changed through a pull request the Independent Reviewer approves.
+      - Confirm both people have read the current versions (ac-1 dissemination).
+    evidence: The merged pull request, or a comment from the Independent Reviewer saying nothing needed to change.
+
+  - id: configuration-review
+    title: Yearly review of functions, software and data location
+    route: scheduled
+    controls: [cm-7.1, cm-7.2, cm-7.5, cm-12]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-11-10
+    checklist:
+      - List the AWS services, Okta apps and GitHub Actions in use. Remove any that aren't needed (cm-7.1).
+      - Confirm only the software declared in Terraform, the Kubernetes manifests and the pinned Actions runs, and that nothing else can be started (cm-7.2, cm-7.5).
+      - Confirm the record of where data is stored (S3 buckets, RDS, CloudWatch Logs, by Region) is current (cm-12).
+    evidence: A comment with the list reviewed and the pull requests for anything removed.
+
+  - id: connections-review
+    title: Yearly review of remote access and connections
+    route: scheduled
+    controls: [ac-17, ac-17.1, ac-17.3, ca-9, sc-7.4, sc-7.8]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-11-17
+    checklist:
+      - Confirm the only remote access paths are the AWS console and API, the Okta admin console, and GitHub, each through Okta or AWS IAM with MFA (ac-17, ac-17.1).
+      - Confirm all remote access goes through those managed points and no other (no bastion host, VPN or open SSH) (ac-17.3).
+      - Confirm the internal connections between components are the ones the security plan lists (ca-9).
+      - Confirm external network traffic follows the declared routes, and that each external service connection is documented (sc-7.4, sc-7.8).
+    evidence: A comment with what was checked, and pull requests for anything changed.
+
+  - id: external-services-review
+    title: Yearly review of external services and suppliers
+    route: scheduled
+    controls: [ac-20, ac-20.1, ca-3, sa-9, sr-2.1, sr-5]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-11-24
+    checklist:
+      - List every external service the system uses (AWS, Okta, GitHub, and any other) with its FedRAMP status and the agreement that covers it (sa-9, ca-3).
+      - Confirm personal devices and other external systems are used only as the access-control policy allows (ac-20, ac-20.1).
+      - Review the supply chain risk plan, including who carries out supply chain risk management and how suppliers are chosen (sr-2.1, sr-5).
+    evidence: A comment with the list and any agreements or plan changes linked.
+
+  - id: development-review
+    title: Yearly review of development practice
+    route: scheduled
+    controls: [sa-3, sa-5, sa-8, sa-10, sa-11, sa-22, sc-18, si-10, si-11]
+    owner: kernwill
+    signoff: [elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-12-01
+    checklist:
+      - "Confirm changes still follow the change management policy: branch, pull request, independent approval and substrate's gate (sa-3, sa-10)."
+      - Confirm the README and SUBSTRATE-TESTING.md describe the system as built (sa-5).
+      - Confirm the security engineering principles in the security plan are followed in new changes (sa-8).
+      - Confirm tests and checks run on every pull request (sa-11).
+      - List components past their supplier's end of support (Terraform, providers, the RDS engine, Kubernetes images) and plan replacements (sa-22).
+      - Confirm no mobile code runs in the system, or that what runs is approved (sc-18). Confirm inputs are validated and error messages expose no internal detail (si-10, si-11).
+    evidence: A comment from the Independent Reviewer with what was reviewed and any pull requests raised.
+
+  - id: authentication-review
+    title: Yearly review of authentication, sessions and cryptography
+    route: scheduled
+    controls: [ac-2.5, ia-5.2, ia-5.6, ia-6, ia-7, sc-10, sc-13, sc-17]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-12-08
+    checklist:
+      - Confirm session timeouts in Okta and the AWS console, and that sessions end after the policy's inactivity limit (ac-2.5, sc-10).
+      - Confirm authenticators (Okta factors, AWS keys, GitHub tokens) are protected and rotated as the policy says, and that none is stored in the repository (ia-5.6).
+      - Confirm sign-in pages don't reveal passwords or which part of a sign-in failed (ia-6).
+      - "Confirm the cryptography in use is FIPS-validated where required: AWS KMS, TLS endpoints, and Okta's authentication (ia-7, sc-13)."
+      - Confirm certificates come from approved certificate authorities (ACM, Okta, GitHub) (ia-5.2, sc-17).
+    evidence: A comment with what was checked and any change made.
+
+  - id: audit-config-review
+    title: Yearly review of what is logged
+    route: scheduled
+    controls: [au-2, au-3.3, au-4, au-5]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2026-12-15
+    checklist:
+      - Review the logged event types (CloudTrail, the Okta System Log, GitHub's security log) against what incidents and reviews have needed this year. Add any that were missing (au-2).
+      - Confirm logs hold no more personal data than needed (au-3.3).
+      - Confirm log storage has room for the retention period and costs stay within budget (au-4).
+      - "Confirm someone is alerted when logging fails: the CloudTrail rule, and the Okta archive's silence check (au-5)."
+    evidence: A comment with what was reviewed, and pull requests for any change.
+
+  - id: data-review
+    title: Yearly review of data handling and retention
+    route: scheduled
+    controls: [si-12, si-18.4]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2027-01-05
+    checklist:
+      - Confirm data, including logs and backups, is kept for the declared periods and disposed of after them (si-12).
+      - Confirm requests from individuals to correct their personal data were handled, or that there were none (si-18.4).
+    evidence: A comment with what was reviewed.
+
+  - id: platform-review
+    title: Yearly review of what the cloud platforms provide
+    route: scheduled
+    controls: [ac-6.10, cp-7.3, cp-8, cp-8.1, cp-8.2, ma-2, sc-2, sc-4, sc-20, sc-22, sc-39, si-16]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2027-01-12
+    checklist:
+      - Confirm the system still runs only on managed AWS, Okta and GitHub services, so isolation, memory protection, shared-resource clearing and hardware maintenance are the providers' (sc-2, sc-4, sc-39, si-16, ma-2).
+      - Confirm non-privileged users can't run privileged functions in any component (ac-6.10).
+      - Confirm the second Region (us-west-2) and the providers' network redundancy still meet the contingency plan's needs (cp-7.3, cp-8, cp-8.1, cp-8.2).
+      - Record whether the system's DNS (rookwright.com) is signed with DNSSEC and its resolvers validate it. If not, record the plan or the accepted risk (sc-20, sc-22).
+      - Check each provider's FedRAMP Marketplace status. Once every component is on an authorized offering, these controls can move to inheritance.
+    evidence: A comment with what was checked.
+
+  - id: personnel-security-review
+    title: Yearly personnel security review
+    route: scheduled
+    controls: [cm-2.7, ia-12, ia-12.2, ia-12.3, ia-12.5, ps-3, ps-6, ps-7, ps-8]
+    owner: kernwill
+    signoff: [elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2027-01-19
+    checklist:
+      - Confirm everyone with access was screened before they got it, and rescreened when the policy requires (ps-3).
+      - Confirm everyone with access has signed the current access agreement (ps-6).
+      - Confirm any external personnel meet the same requirements (ps-7), and that the sanctions process is current (ps-8).
+      - Confirm each person's identity was proofed before their account was created, with the evidence and address confirmation the policy requires (ia-12, ia-12.2, ia-12.3, ia-12.5).
+      - Confirm anyone who traveled to a high-risk location used the travel configuration (cm-2.7), or that no one did.
+    evidence: A comment from the Independent Reviewer confirming each item, without personal details.
+
+  - id: security-training
+    title: Yearly security training
+    route: scheduled
+    controls: [at-2, at-2.2, at-2.3, at-3, at-3.5, at-4, cp-3, ir-2, ir-2.3, sr-11.1]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    every_days: 365
+    complete_within_days: 30
+    first_due: 2027-01-26
+    checklist:
+      - "Each person completes security awareness training, including insider threat and social engineering (at-2, at-2.2, at-2.3)."
+      - "The Administrator completes role-based training for AWS, Okta and GitHub administration, including handling personal data (at-3, at-3.5)."
+      - "Both people walk through the contingency plan and the incident response plan, including a simulated event (cp-3, ir-2, ir-2.3)."
+      - "Both people are trained to spot counterfeit components (sr-11.1)."
+      - "Record who completed what and when, and keep the record (at-4)."
+    evidence: A comment listing each person, the training completed and the date, with a link to any completion record.
+
+  - id: annual-assessment
+    title: Yearly security assessment
+    route: scheduled
+    controls: [ca-2, ca-2.1, ca-7.1]
+    owner: kernwill
+    signoff: [elliskern]
+    every_days: 365
+    complete_within_days: 60
+    first_due: 2027-02-02
+    checklist:
+      - Arrange an assessment of the controls by someone independent of the Administrator (ca-2, ca-2.1, ca-7.1).
+      - Attach or link the assessment plan and report, and open issues for the findings.
+    evidence: The assessment report, linked, with the issues opened for its findings.
+
+  # Not applicable: nothing in the system to apply these to. Reviewed yearly.
+  - id: na-wireless
+    route: not-applicable
+    controls: [ac-18.1, ac-18.3]
+    reason: The system has no wireless networking of its own. It runs entirely on AWS, Okta and GitHub managed services, reached over the internet.
+    approver: kernwill
+    approved_on: 2026-10-16
+
+  - id: na-mail
+    route: not-applicable
+    controls: [si-8, si-8.2]
+    reason: The system runs no mail servers and accepts no inbound email. Okta's and GitHub's notification email is sent by those providers, outside the boundary.
+    approver: kernwill
+    approved_on: 2026-10-16
+
+  - id: na-external-users
+    route: not-applicable
+    controls: [ia-8]
+    reason: The system has no non-organizational users. Only the Administrator and the Independent Reviewer have accounts.
+    approver: kernwill
+    approved_on: 2026-10-16
+
+  - id: na-split-tunneling
+    route: not-applicable
+    controls: [sc-7.7]
+    reason: The system provides no VPN or other remote-device connection that split tunneling could apply to. All access is over TLS to managed service endpoints.
+    approver: kernwill
+    approved_on: 2026-10-16
+
+  - id: na-temporary-accounts
+    route: not-applicable
+    controls: [ac-2.2]
+    reason: The system creates no temporary or emergency accounts. Any future one must first replace this entry with a route that removes it automatically.
+    approver: kernwill
+    approved_on: 2026-10-16

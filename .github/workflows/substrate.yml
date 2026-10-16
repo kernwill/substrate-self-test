@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: 98995a1d202d24897e0e04d52bf2d4c28a11ec5f
+  SUBSTRATE_COMMIT: d2fdbe34bbef57ecf131a7d148bba5c1871dffa3
 
 jobs:
   verify:
@@ -120,5 +120,5 @@ jobs:
           # workflow that the gate judges the live system (cm-4.2).
           quiet "$RUNNER_TEMP/substrate" compile --source . --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml \
             --runtime "$t/runtime" --documents "$t/documents.json" --documents-root . --tls "$t/tls.json" \
-            --security-txt "$t/security_txt.json" --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
+            --security-txt "$t/security_txt.json" --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
           "$RUNNER_TEMP/substrate" gate --baseline substrate-baseline-live.json --current "$t/out/ksi_results.json"
