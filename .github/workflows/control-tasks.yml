@@ -1,14 +1,16 @@
 name: Control tasks
 
-# The control register's scheduler (substrate ADR 0026). Each day,
-# substrate reads substrate-controls.yaml and the control-task issues,
-# and lists the tasks due. This job then opens each as an issue assigned
-# to its owner. Substrate only reads; the job's own token opens the
-# issues, and issues it opens are the only ones that count. Nothing but
-# the task IDs is printed.
+# The control register's scheduler (substrate ADR 0026). Every six
+# hours, substrate reads substrate-controls.yaml, the control-task
+# issues, the incident issues and the Okta System Log (okta.logs.read
+# only), and lists the tasks due: scheduled tasks whose day has come,
+# and an event task for each event that has none yet. This job then
+# opens each as an issue assigned to its owner. Substrate only reads;
+# the job's own token opens the issues, and issues it opens are the only
+# ones that count. Nothing but the task IDs is printed.
 on:
   schedule:
-    - cron: "0 13 * * *"
+    - cron: "0 1,7,13,19 * * *"
   workflow_dispatch:
 
 permissions: {}
@@ -18,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: d2fdbe34bbef57ecf131a7d148bba5c1871dffa3
+  SUBSTRATE_COMMIT: 4ffbd1bbb7b04df385077dd526443dfe7d331ffa
 
 jobs:
   open-due-tasks:
@@ -48,16 +50,29 @@ jobs:
           cache: false
       - name: Build substrate
         run: cd "$RUNNER_TEMP/substrate-src" && go build -trimpath -o "$RUNNER_TEMP/substrate" ./cmd/substrate
+      # Exit 1 means the Okta System Log couldn't be read: the other tasks
+      # are still listed and opened, then the job fails so it shows.
       - name: List the tasks due
+        id: list
         env:
           GH_TOKEN: ${{ github.token }}
+          OKTA_ORG_URL: ${{ secrets.OKTA_ORG_URL }}
+          OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
+          OKTA_KEY_ID: ${{ secrets.OKTA_KEY_ID }}
+          OKTA_PRIVATE_KEY_PEM: ${{ secrets.OKTA_PRIVATE_KEY }}
         run: |
           umask 077
           printf '%s' "$GH_TOKEN" > "$RUNNER_TEMP/github.token"
+          printf '%s\n' "$OKTA_PRIVATE_KEY_PEM" > "$RUNNER_TEMP/okta.pem"
+          rc=0
           "$RUNNER_TEMP/substrate" control-tasks --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" \
             --github-owner "${GITHUB_REPOSITORY%/*}" --github-repo "${GITHUB_REPOSITORY#*/}" \
-            --github-token-path "$RUNNER_TEMP/github.token" --out "$RUNNER_TEMP/due.json"
-          rm -f "$RUNNER_TEMP/github.token"
+            --github-token-path "$RUNNER_TEMP/github.token" --out "$RUNNER_TEMP/due.json" \
+            --okta-org-url "$OKTA_ORG_URL" --okta-client-id "$OKTA_CLIENT_ID" --okta-key-id "$OKTA_KEY_ID" \
+            --okta-private-key "$RUNNER_TEMP/okta.pem" > "$RUNNER_TEMP/list.log" 2>&1 || rc=$?
+          rm -f "$RUNNER_TEMP/github.token" "$RUNNER_TEMP/okta.pem"
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then echo "substrate control-tasks failed ($rc)"; exit "$rc"; fi
       - name: Open them
         env:
           GH_TOKEN: ${{ github.token }}
@@ -76,3 +91,8 @@ jobs:
             echo "opened $task"
           done
           echo "$count task(s) opened"
+      - name: Fail if the Okta System Log couldn't be read
+        if: steps.list.outputs.rc == '1'
+        run: |
+          echo "The Okta System Log couldn't be read: Okta-triggered tasks weren't checked this run."
+          exit 1
