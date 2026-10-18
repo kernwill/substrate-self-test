@@ -96,6 +96,74 @@ tasks:
       - Record lessons learned and link the pull request for any change to the plan.
     evidence: A comment summarizing the quarter's incidents and their reporting, or saying there were none.
 
+  # Event tasks: opened by the control-tasks workflow for each event, a
+  # few hours after it, with the time counted from the event itself.
+  # Issues name people by Okta user ID only, since this repository is
+  # public. The quarterly reviews above still catch what no event shows
+  # (someone who left but whose account was never deactivated).
+  - id: offboarding
+    title: Offboarding
+    route: event
+    trigger: okta-user-deactivated
+    controls: [ps-4]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    complete_within_hours: 72
+    events_from: 2026-10-19
+    checklist:
+      - "Confirm the person's access is gone everywhere, not only in Okta: AWS, GitHub, and any account outside Okta sign-on."
+      - Revoke or rotate every shared credential or key the person knew or held.
+      - Recover any equipment and authenticators issued to them, or record that there were none.
+      - Remind them of the obligations that continue after access ends, or record why that wasn't possible.
+      - If the deactivation was a test or a temporary suspension, say so and record why.
+    evidence: A comment going through each item, with the date access ended in each system.
+
+  - id: access-change
+    title: Access change review
+    route: event
+    trigger: okta-user-transferred
+    controls: [ps-5]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    complete_within_hours: 120
+    events_from: 2026-10-19
+    checklist:
+      - Confirm the group change matches the person's current duties and was approved.
+      - Remove any access the person's new duties no longer need, in Okta, AWS and GitHub.
+      - If the change was to set up or test the system, say so.
+    evidence: A comment saying who approved the change and what access was added or removed.
+
+  - id: new-account
+    title: New account review
+    route: event
+    trigger: okta-user-created
+    controls: [ac-2, ps-3, ps-6]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    complete_within_hours: 120
+    events_from: 2026-10-19
+    checklist:
+      - Confirm the account was requested and approved, and its role matches the access-control policy (ac-2).
+      - Confirm the person was screened before they were given access (ps-3).
+      - Confirm they signed the access agreement before they were given access (ps-6).
+      - If the account is a test or service account, say so, and when it will be removed.
+    evidence: A comment recording the approval, the screening and the signed agreement (where each is kept, not the records themselves).
+
+  - id: incident-response
+    title: Incident handling record
+    route: event
+    trigger: incident-opened
+    controls: [ir-4, ir-6]
+    owner: kernwill
+    signoff: [kernwill, elliskern]
+    complete_within_hours: 72
+    events_from: 2026-10-19
+    checklist:
+      - Record how the incident was contained, its cause, and how it was resolved, on the incident issue.
+      - Decide whether it meets the reporting threshold in the incident response plan. If it does, record when and where it was reported (ir-6).
+      - Link any change it led to.
+    evidence: A comment linking the incident issue and saying whether it was reportable.
+
   # Yearly tasks, staggered so they don't all open at once.
   - id: policy-review
     title: Yearly policy and plan review
