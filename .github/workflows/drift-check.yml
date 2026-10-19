@@ -1,6 +1,6 @@
 name: Drift check
 
-# Every night, compare the live AWS account with main (si-7, si-7.1),
+# Every six hours, compare the live AWS account with main (si-7, si-7.1),
 # and look for AWS resources nothing declared (cm-8.3, pl-9): in AWS
 # Config's inventory but not in Terraform state, not created by AWS, and
 # not a declared exception (substrate-parameters.yaml, inventory).
@@ -8,9 +8,13 @@ name: Drift check
 # job opens an issue labelled drift and incident (si-7.7), or comments
 # on the one already open. The plan itself is never printed, since this
 # repository is public; only the changed resource addresses are.
+#
+# Six-hourly, not nightly: GitHub starts scheduled runs late, by four to
+# seven hours in October 2026, and by different amounts each day. One
+# nightly run let a 27-hour gap open on 2026-10-19, past si-7.1's 26.
 on:
   schedule:
-    - cron: "17 7 * * *"
+    - cron: "17 1,7,13,19 * * *"
   workflow_dispatch:
 
 permissions: {}

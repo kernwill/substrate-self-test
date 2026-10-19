@@ -69,7 +69,8 @@ integrity:
   # The nightly check for changes made outside a reviewed pull request
   # (si-7). check runs terraform plan; report-drift runs only when the
   # live account differs from main and opens an incident issue. At most
-  # 26 hours between successful checks: nightly, with slack (si-7.1).
+  # 26 hours between successful checks (si-7.1). The check runs every six
+  # hours, so a late GitHub schedule can't open a gap that long.
   workflow: .github/workflows/drift-check.yml
   check_job: check
   report_job: report-drift
