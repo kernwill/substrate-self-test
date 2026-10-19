@@ -80,7 +80,7 @@
     {
       "Sid": "SubstrateRDSCollector",
       "Effect": "Allow",
-      "Action": ["rds:DescribeDBInstances"],
+      "Action": ["rds:DescribeDBInstances", "rds:DescribeDBEngineVersions", "rds:DescribeDBMajorEngineVersions"],
       "Resource": "*"
     },
     {
