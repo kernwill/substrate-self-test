@@ -1,8 +1,8 @@
 {
-  "schema_version": "1",
-  "approved_at": "2026-10-10T20:22:36.470479Z",
+  "schema_version": "2",
+  "approved_at": "2026-10-19T15:18:41.138057Z",
   "approved_by": "Will Kern <kernwill@yahoo.com>",
-  "git_commit": "453b1f3901178595c46248a5a44e02affbfa13d2",
+  "git_commit": "b0cdcb3da63919d51647469371dc3439c0fe2d99",
   "results": [
     {
       "indicator": "KSI-CED-RAT",
@@ -14,9 +14,16 @@
     {
       "indicator": "KSI-CMT-LMC",
       "family": "CMT",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"au-2\", \"cm-8.3\", \"ma-2\"]; partial evidence only, not counted toward coverage: [\"au-2 (statement part(s): c)\"]; of those, needing a human attestation rather than a collector: [\"au-2 (statement part(s): a, b, d, e)\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "not_satisfied",
+      "reason": "2 of 7 referenced control(s) failed: [\"cm-4.2\", \"cm-8.3\"] (evidenced by: [\"github:kernwill/substrate-self-test#change-verification\", \"github:kernwill/substrate-self-test#unauthorized-component-detection\"])",
+      "evidence": [
+        "github:kernwill/substrate-self-test#change-verification",
+        "github:kernwill/substrate-self-test#unauthorized-component-detection"
+      ],
+      "failed_controls": [
+        "cm-4.2",
+        "cm-8.3"
+      ]
     },
     {
       "indicator": "KSI-CMT-RMV",
@@ -28,16 +35,22 @@
         "aws:guardduty:4ad08e4f326d119528b46387b44ba956#malware-protection",
         "github:kernwill/substrate-self-test#branch-protection-restrictions",
         "github:kernwill/substrate-self-test#branch-protection-reviews",
+        "github_actions:.github/workflows/audit-failure-drill.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/audit-failure-drill.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/ci.yml#dependency-review[test]#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#dependency-review[test]#component-inventory-update",
         "github_actions:.github/workflows/ci.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#permissions#component-inventory-update",
+        "github_actions:.github/workflows/control-tasks.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/control-tasks.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/drift-check.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/drift-check.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/incident-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/incident-drill.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#component-inventory-update",
+        "github_actions:.github/workflows/privilege-review.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/privilege-review.yml#permissions#component-inventory-update",
         "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/substrate.yml#permissions#component-inventory-update",
         "kubernetes:Deployment.default/web#container-security-context[0]",
@@ -80,9 +93,14 @@
     {
       "indicator": "KSI-CMT-VTD",
       "family": "CMT",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"si-2\"]; of those, needing a human attestation rather than a collector: [\"si-2\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "not_satisfied",
+      "reason": "1 of 4 referenced control(s) failed: [\"cm-4.2\"] (evidenced by: [\"github:kernwill/substrate-self-test#change-verification\"])",
+      "evidence": [
+        "github:kernwill/substrate-self-test#change-verification"
+      ],
+      "failed_controls": [
+        "cm-4.2"
+      ]
     },
     {
       "indicator": "KSI-CNA-DFP",
@@ -91,11 +109,14 @@
       "reason": "all 2 referenced control(s) have IR evidence",
       "evidence": [
         "aws:guardduty:4ad08e4f326d119528b46387b44ba956#malware-protection",
+        "github_actions:.github/workflows/audit-failure-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#dependency-review[test]#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/control-tasks.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/drift-check.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/incident-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/privilege-review.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
         "kubernetes:Deployment.default/web#container-security-context[0]#baseline-configuration",
         "kubernetes:Deployment.default/web#pod-security-context#baseline-configuration",
@@ -153,6 +174,9 @@
       "reason": "1 of 3 referenced control(s) failed: [\"sc-5\"] (evidenced by: [\"aws:shield:account#subscription\"])",
       "evidence": [
         "aws:shield:account#subscription"
+      ],
+      "failed_controls": [
+        "sc-5"
       ]
     },
     {
@@ -166,7 +190,7 @@
       "indicator": "KSI-IAM-AAM",
       "family": "IAM",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-2.13\", \"ac-2.2\", \"ac-2.3\", \"ac-6.7\", \"ia-12\", \"ia-12.2\", \"ia-12.3\", \"ia-12.5\"]; of those, needing a human attestation rather than a collector: [\"ac-2.13\", \"ac-2.2\", \"ia-12\", \"ia-12.2\", \"ia-12.3\", \"ia-12.5\"]",
+      "reason": "missing IR evidence for control(s): [\"ac-2.13\", \"ac-2.2\", \"ac-2.3\", \"ia-12\", \"ia-12.2\", \"ia-12.3\", \"ia-12.5\"]; of those, needing a human attestation rather than a collector: [\"ac-2.13\", \"ac-2.2\", \"ia-12\", \"ia-12.2\", \"ia-12.3\", \"ia-12.5\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -180,14 +204,14 @@
       "indicator": "KSI-IAM-ELP",
       "family": "IAM",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-17\", \"ac-17.1\", \"ac-17.2\", \"ac-17.3\", \"ac-2.5\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"cm-2.7\", \"cm-9\", \"ia-4\", \"ia-5.2\", \"ia-5.6\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-20\", \"sc-22\", \"sc-39\", \"sc-4\"]; of those, needing a human attestation rather than a collector: [\"ac-17\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"cm-2.7\", \"cm-9\", \"ia-5.6\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-39\", \"sc-4\"]",
+      "reason": "missing IR evidence for control(s): [\"ac-17\", \"ac-17.1\", \"ac-17.3\", \"ac-2.5\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"cm-2.7\", \"cm-9\", \"ia-4\", \"ia-5.2\", \"ia-5.6\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-20\", \"sc-22\", \"sc-39\", \"sc-4\"]; of those, needing a human attestation rather than a collector: [\"ac-17\", \"ac-2.6\", \"ac-20\", \"ac-20.1\", \"cm-2.7\", \"cm-9\", \"ia-5.6\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"sc-39\", \"sc-4\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-IAM-JIT",
       "family": "IAM",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-17\", \"ac-2\", \"ac-2.2\", \"ac-2.3\", \"ac-2.6\", \"ac-20.1\", \"ac-6.10\", \"ac-6.2\", \"ac-6.7\", \"au-9.4\", \"cm-7.2\", \"cm-7.5\", \"cm-9\", \"ia-4\", \"ia-7\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ra-5.5\", \"sc-2\", \"sc-39\"]; of those, needing a human attestation rather than a collector: [\"ac-17\", \"ac-2.2\", \"ac-2.6\", \"ac-20.1\", \"ac-6.10\", \"ac-6.2\", \"cm-9\", \"ia-7\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ra-5.5\", \"sc-2\", \"sc-39\"]",
+      "reason": "missing IR evidence for control(s): [\"ac-17\", \"ac-2\", \"ac-2.2\", \"ac-2.3\", \"ac-2.6\", \"ac-20.1\", \"ac-6.10\", \"ac-6.2\", \"cm-7.2\", \"cm-7.5\", \"cm-9\", \"ia-4\", \"ia-7\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ra-5.5\", \"sc-2\", \"sc-39\"]; of those, needing a human attestation rather than a collector: [\"ac-17\", \"ac-2.2\", \"ac-2.6\", \"ac-20.1\", \"ac-6.10\", \"ac-6.2\", \"cm-9\", \"ia-7\", \"ps-3\", \"ps-4\", \"ps-5\", \"ps-6\", \"ra-5.5\", \"sc-2\", \"sc-39\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -270,6 +294,7 @@
         "aws:config-rule:securityhub-beanstalk-enhanced-health-reporting-enabled-505b2376#compliance",
         "aws:config-rule:securityhub-bedrockagentcore-browsercustom-network-mode-not-public-c775fd2e#compliance",
         "aws:config-rule:securityhub-bedrockagentcore-browsercustom-recording-enabled-b7334e56#compliance",
+        "aws:config-rule:securityhub-bedrockagentcore-codeinterpreter-networkmode-check-efd1fe90#compliance",
         "aws:config-rule:securityhub-bedrockagentcore-gateway-authorizer-enabled-4ca4221e#compliance",
         "aws:config-rule:securityhub-bedrockagentcore-runtime-private-network-required-49de59ed#compliance",
         "aws:config-rule:securityhub-clb-desync-mode-check-c2688507#compliance",
@@ -549,11 +574,14 @@
         "aws:config-rule:securityhub-sagemaker-model-bias-job-encrypt-in-transit-34d42770#compliance",
         "aws:config-rule:securityhub-sagemaker-model-bias-job-isolation-f6553ddb#compliance",
         "aws:config-rule:securityhub-sagemaker-model-explainability-job-encrypt-in-transit-94e00ee0#compliance",
+        "aws:config-rule:securityhub-sagemaker-model-explainability-job-network-isolation-9201a8c1#compliance",
         "aws:config-rule:securityhub-sagemaker-model-isolation-enabled-eeb2f5a7#compliance",
         "aws:config-rule:securityhub-sagemaker-model-multicontainer-private-registry-1fcbaedf#compliance",
         "aws:config-rule:securityhub-sagemaker-model-private-registry-required-727674d0#compliance",
+        "aws:config-rule:securityhub-sagemaker-model-quality-job-definition-isolation-55e858aa#compliance",
         "aws:config-rule:securityhub-sagemaker-model-quality-job-encrypt-in-transit-54c6a4de#compliance",
         "aws:config-rule:securityhub-sagemaker-monitoring-schedule-isolation-4bcca87f#compliance",
+        "aws:config-rule:securityhub-sagemaker-monitoring-schedule-traffic-encryption-1bf05e9b#compliance",
         "aws:config-rule:securityhub-sagemaker-notebook-instance-inside-vpc-874803ff#compliance",
         "aws:config-rule:securityhub-sagemaker-notebook-instance-platform-version-83ce803c#compliance",
         "aws:config-rule:securityhub-sagemaker-notebook-instance-root-access-check-5930262e#compliance",
@@ -612,18 +640,28 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Account.1/finding/1ec5dfb8-9b11-46a0-9f7f-937fb7e53124#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AppSync.2/finding/01de969b-f7aa-4d33-b1bc-0def8a92ae18#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AppSync.5/finding/3e336537-a0d8-434a-a0b5-9177d1bc9510#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Athena.4/finding/8e6440fd-a15c-4371-8287-b4fd982834d4#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Athena.4/finding/9809b900-1e4d-4585-a0ea-3879b57e65ab#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.1/finding/5420576b-8efa-4676-9421-7e6969dbb165#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.2/finding/595b4193-504f-4490-ba57-a203f8f88743#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.3/finding/622d5c81-3768-4990-b880-acf9ae42a036#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.6/finding/cacc6836-6127-4801-8e47-0384d3eecd50#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/AutoScaling.9/finding/03e59c94-a2d2-45e0-9cc7-d795ab1a61b3#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Autoscaling.5/finding/9003a99f-44bc-4630-8000-0d0c9c9eef0b#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/03f2ed61-b4ef-441e-89b9-a06527caff0b#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/09cc3d31-d0bb-43d5-9487-a9f739c27320#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/4b60b48d-20c5-4689-9a58-42ca8541d8cc#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/528c7a58-40ec-4e89-ad3e-f94996d3cb4c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/6a9ae48b-545e-4c67-b9ee-9f5b67d33f25#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/70c5489b-eee5-4843-9532-382cc2b5d1b8#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/834d614c-e8f0-43aa-ac2e-e35d9af1df5d#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/8f4ed7ef-1e86-40ed-98f4-ae304dd3f552#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/c9e3e85a-ec7d-4f69-9112-9e043ecda74a#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Backup.1/finding/ff0e3963-5f9d-426c-a82c-43883c166940#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.1/finding/16d15402-7382-457b-b249-c0efb78d2826#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.2/finding/53057b5b-e22a-486e-b4dd-0df555da3952#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.5/finding/07050f16-6d63-4230-844b-79fad160cc1d#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.6/finding/7869ca8e-c7c5-459b-8dbc-49fae071c5e7#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/BedrockAgentCore.7/finding/5b02bb81-3dd4-4390-81f0-083b1cc2a655#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudFormation.3/finding/d3f179e3-cad2-4a04-992a-a19e0b3f4ca1#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudFormation.4/finding/9ac002d7-f228-40c0-958d-7b3c88dbd02a#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudTrail.1/finding/120f0c7c-2f09-4ba3-a6cd-dabf943547d5#finding",
@@ -631,6 +669,7 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudTrail.4/finding/7b08b538-1ab7-4d8f-84ce-41fd9fa8f734#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudTrail.5/finding/a5c3c91f-bb03-485f-8ef2-c47e95741c92#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudTrail.6/finding/91d227cc-63b8-4bc8-929a-3cd0a916966f#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudTrail.7/finding/8bfd30fd-29d3-4745-ac6d-42165bf31f10#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudWatch.1/finding/aa3e80f9-a4a5-4183-b6e6-09f8a8e3ee9c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudWatch.10/finding/09372cf5-0331-4034-a36d-30b7ae10e1fc#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/CloudWatch.11/finding/6d0fb5d1-5a11-4ee5-bd7f-43ee0f7a8c68#finding",
@@ -685,6 +724,8 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.13/finding/a3d0154d-a1f8-4020-a1e1-2bd9c5113528#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.14/finding/12c34c7a-d181-4f90-b1cb-a5b611937f00#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.14/finding/3952e1f9-1382-4d39-a2c4-0362f10cb710#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.15/finding/0871dced-f7ab-4e90-9907-18220c1da2d8#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.15/finding/317d347c-24d7-43e0-bf09-67119951ef20#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.15/finding/71108c4d-2d76-4b05-b189-6899ebbc0758#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.16/finding/5599443c-9d39-4ab5-9fa0-21095938186c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/EC2.17/finding/ff3d1e44-5bd6-45b2-bd24-ae3523a34f8e#finding",
@@ -821,23 +862,35 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Inspector.3/finding/c10f5d52-be26-4b16-a313-cbe727c04042#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Inspector.4/finding/0174be6c-201f-45fa-99f3-ca545c2a01b7#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.1/finding/27cc7c3e-714d-450c-9a6e-e724d4b23150#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/09a7b2ce-9651-4f0d-b0b1-2b0c43e2a56c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/0d7d1053-47ef-4cc3-a4d2-d0f0d86d8c9f#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/1e31d413-2d71-4070-b729-2340ff1852f1#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/27b2cd54-2144-4152-89ea-548c381dfa9f#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/2a03528c-3cd6-4480-9214-4fcab3004818#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/31acfa09-ca34-4816-90ad-21c202fb7fc4#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/41a0a139-5490-4afd-8d2e-e2d0cf600dd7#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/4a4ae91b-d67d-42fb-a19f-75f0391f7c9c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/50459644-07db-4ec9-90bc-a9a5eb8cc52f#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/5474e087-79c5-4e58-a0f2-21f9b2946673#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/5c7a2186-ff12-49f0-bbb6-7a3a846b58f4#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/6a2ecaaf-dfee-4645-9bbb-5129734119d1#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/6fa78981-949b-4e3a-a68d-5f8a0570927e#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/7dc13ffd-c70e-43f5-b471-2f5d64bff381#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/85e48776-8a82-40be-8cd4-0e2857379f63#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/8771b690-3c75-4fcb-b3bd-d187c7c3a7a0#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/908e2162-347b-4924-9c55-b5cafbabd470#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/b8c2b953-99d5-4a0d-99d0-2749c12f6890#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/b96f6502-a549-406a-b628-2e2a4a7c6719#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/cb6eb262-793d-4131-9136-111fb558fb4d#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/cca655b9-ab0a-4ecb-bd67-53aa4dc319b2#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/cd9bde9e-9471-460a-9d05-f8a37ae0b13f#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/d9f8a496-c31f-415b-bcbc-940899aa7273#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/e9f44a20-92b3-42e0-9a0d-2612d1ac9516#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/f15a0e8a-3005-409a-a1a3-8be6315a1886#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.3/finding/0e373c69-a1ba-4f14-9510-36658647ae8e#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.2/finding/ffe1d3bd-fe5e-4c0e-a394-ad6150ad3679#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.3/finding/c6433527-2d18-4025-a62f-3c972b9a5088#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.4/finding/b4f5c156-6a00-435f-87bb-28044a34f635#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.5/finding/9f71edf6-ad28-4302-b0c2-a881b4f06b45#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/KMS.5/finding/514b9d68-258b-4732-ac05-0463b53ad95f#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Kinesis.1/finding/90b8ebf6-f5a5-46d9-b2ad-1deadcb72c71#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Kinesis.3/finding/368b5ed8-3d1f-4a9c-b907-e22b45fc6371#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Lambda.1/finding/ad8a6158-b725-4969-a313-c9d422904528#finding",
@@ -876,12 +929,25 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Opensearch.7/finding/3cec1f81-6b23-45b6-a19b-1e440fc45da3#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/Opensearch.8/finding/126114ea-52fc-440e-a418-b2fb4c0102e8#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/PCA.1/finding/cc2d26bd-955a-4c11-848c-c576a84cb1af#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/0bb421e5-291a-485a-8d88-86a87bcfb5a6#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/1d0ade91-2690-4118-a9d0-bd573d75cb99#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/47a06eff-28d8-4c07-97b8-320e9e958a03#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/04e93064-7158-40cf-9521-33777a8585cc#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/2f5603c7-5a59-42a8-adf5-5175ee622f10#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/40bd8065-b862-4958-85fb-9789b0a4aed3#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/434427fd-5413-4b8a-8110-a1d20eae7823#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/43652fca-b387-4ca2-8b06-2c814e42ae59#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/50cb2618-d12e-4bad-ba07-2b4e6393ee2c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/5d7dbadd-b68c-4f2f-9b51-12826ea8e4ee#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/813eef32-9b88-4645-bcf7-e15b3e10443d#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/8498e283-1954-46d1-9db7-bd3c43ed0521#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/88acfedb-4836-4275-ad26-9871f7ccbb47#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/984a0582-56ba-4dcd-b5b8-ed77cbc3cd1c#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/a52afc6a-abc1-471f-98d2-0f93db239973#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/a8a401ea-7e8c-42e0-b698-70aa757dc3b0#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/c72eb053-6277-429b-b717-30d90517a804#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/f0255150-2ee2-4113-9fc4-d16a85a5eb68#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/afd18e02-95b6-4254-9806-9d5cebf3a246#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/ba10f7ce-a01c-4374-a747-63dd7a4b42c9#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/be3b8a95-5add-4336-9b9f-f2b88291d3b3#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/c78f43dd-1836-418e-a3bb-b92434b1ab55#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/d1a257f2-9d6d-4d53-a6cc-fab954a772aa#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.1/finding/f1517784-3a08-4b62-bb85-95e7a22374f7#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.10/finding/8c96c58c-21a2-43a4-81bb-869d86ad0286#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.11/finding/51d7afd4-c90b-4cf9-b38e-791dc90eb383#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.12/finding/f907e322-de55-471e-9531-ca0af680be7a#finding",
@@ -906,12 +972,25 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.37/finding/a72f650e-5584-4275-8ae6-09da04d11aee#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.38/finding/7d81bb2d-7ce4-4bd9-bdb5-c83642d75e3c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.39/finding/f795905a-a83e-41d9-995b-e234beece2ce#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/05d20b95-e79b-4045-9269-2328fb75f518#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/2436473e-0eda-4848-8281-1a30c75b9cc1#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/6d185858-1022-4159-bd77-1aa9d10a3acb#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/7b441b70-f0b1-44a1-ac62-40fe6aeeff2a#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/00510be8-3522-4433-b144-e919a6a44dcb#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/1a72fef7-ed4a-456a-aad1-debc51800ad5#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/2b2290d2-616d-4947-ac9f-8c2cb85029dd#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/2be46e5e-affd-44d7-b455-63e722d7ca34#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/30a72b1c-0df9-4b75-a55a-e535945e4b70#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/3ad22cdf-e75f-4f8a-a85d-a88fdbe413ff#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/42154abf-d385-4cda-a85c-9cdfc3320a74#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/4263ce65-fa4e-48e2-a5dc-ef067769ce44#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/4c8f15e1-8552-4077-8df7-38bea487285a#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/73e79b5d-e2cf-40e2-bd1c-8d9a775c6813#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/8511a377-3b16-4feb-910e-28b19b9a83f6#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/87e0e337-9959-4dde-bd43-01641f10aa03#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/8a66a4b9-56a9-42aa-b43a-4285f9149edb#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/9a406e11-9114-4c7c-9ded-f18193772c31#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/9c071aac-ee77-4cd0-ad92-4761bb8b2297#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/c86d3179-a185-4920-83b5-fe45a5d38b97#finding",
-        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/d46ad168-3723-45dc-af2b-927049ff506e#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/ceda9b62-6673-4398-a4fd-b6498d357985#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/d2f10348-32ef-43fa-b0dd-eb62aa071ea6#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.4/finding/e7b3f450-6a54-48ea-9724-5c0c7f79b87b#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.40/finding/756baac2-f056-4cdf-8e3c-565a1b9b8ca9#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.41/finding/619085a0-0aa8-439e-932b-f973846fe165#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RDS.42/finding/b5ceab95-6899-45a5-9411-60fd0edb611a#finding",
@@ -945,8 +1024,12 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/RedshiftServerless.6/finding/8d649e72-c12a-4cae-bd53-8b9b8d689ac6#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.1/finding/aed4022e-0419-4fb7-aa21-a48a9b81d115#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.12/finding/8dc1b3a3-9489-4483-b755-da4edc82d4a8#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.12/finding/94cc272c-69f0-4e63-bf19-b3834ddde5ae#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.12/finding/957db0ff-5526-47ed-b6a8-dfec85e31834#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.12/finding/d3c4db90-4b75-46f2-aa0d-54f07183f428#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.13/finding/3b2f68b9-adfe-45f5-85b3-b6018ccd3423#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.13/finding/5fbd60eb-4679-492f-b501-530a15d5fd55#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.13/finding/8f2de842-55d0-4de3-aded-82406f68f1fb#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.13/finding/da85256a-23eb-4712-9096-21a0e5899783#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.19/finding/1ab9fba7-5312-4e3f-9153-7ec6a72479f6#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.2/finding/1ee11a80-de6c-492e-aa6a-32c4d02ff9a6#finding",
@@ -958,13 +1041,21 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.3/finding/21d576dd-3c6b-4446-826c-7332daf92df4#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.3/finding/47020f1c-3010-40bf-b96b-e9aceb545551#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.3/finding/d0495ae9-b56b-419b-a949-f0d2d18a41fd#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.5/finding/03540fc1-76cb-463c-b7d9-d7d64ad5bd03#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.5/finding/6b220f9f-4384-46b4-8446-8d8874319773#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.5/finding/74ce37c9-9414-436c-83e5-46bd28f1e5ab#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.5/finding/e7c2d0e0-f13c-4367-85d6-da7158340721#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.6/finding/89d41a61-f1cd-4363-b6e9-bc0fbf4e34a9#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.6/finding/8b9e6f39-545d-417c-9d90-9d2d84d156d5#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.6/finding/92f429cb-9995-46a8-b221-7d1ab4082626#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.6/finding/ac565030-f29c-44ba-857c-419a5b251e5f#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.8/finding/362d18d6-bf3f-4f39-b20f-5c316cb649ee#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.8/finding/8f33e21d-6c47-4aa2-94fa-69971dbf98b6#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.8/finding/abe67701-ed25-413d-9b5f-a27ce498fc38#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.8/finding/f8b538ca-442d-476b-8044-48192303a57b#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.9/finding/0116ae96-8574-4d35-9a6e-cb61ee6ed143#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.9/finding/4ff2aceb-7ef4-48d3-96c8-db7722f950c5#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.9/finding/f329f781-31c8-4660-b849-ebebd613918f#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/S3.9/finding/f7630d56-dce3-4341-9578-0bd31fcc4cb5#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SES.3/finding/ae344f69-5226-481e-a354-e999fe4bb801#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SNS.4/finding/cbe225de-3c14-4e75-a5e2-52f229353387#finding",
@@ -987,6 +1078,9 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.17/finding/093e149d-fcd4-4e2d-9b13-bd7fef808245#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.19/finding/0e8764a0-1185-402c-bb51-d11b2715e71c#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.2/finding/89c3d74a-cf41-4065-8366-6ef2b88c9baa#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.20/finding/1807066b-d891-4f4e-8380-83e833815dfd#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.22/finding/43da469e-0026-4821-8ddf-ba6803b6bc2d#finding",
+        "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.25/finding/8f396ed5-1bb0-4960-a5c8-00b57c8afc9e#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.3/finding/88197ca5-a19e-4f39-88b1-ba06617e3500#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.4/finding/7ec8df68-ede2-4aaf-8743-2a5e9cb911a6#finding",
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/SageMaker.5/finding/925cced6-4a97-4be7-932b-a546e26a8a5c#finding",
@@ -1010,11 +1104,14 @@
         "aws:securityhub-finding:arn:aws:securityhub:us-east-2:632839731153:security-control/WAF.4/finding/53b89acb-431c-420f-97ae-ab9270cfb878#finding",
         "aws:securityhub:arn:aws:securityhub:us-east-2:632839731153:hub/default#enablement",
         "github:kernwill/substrate-self-test#integrity-incident-response",
+        "github_actions:.github/workflows/audit-failure-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#dependency-review[test]#baseline-configuration",
         "github_actions:.github/workflows/ci.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/control-tasks.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/drift-check.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/incident-drill.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/policy-review-reminder.yml#permissions#baseline-configuration",
+        "github_actions:.github/workflows/privilege-review.yml#permissions#baseline-configuration",
         "github_actions:.github/workflows/substrate.yml#permissions#baseline-configuration",
         "kubernetes:Deployment.default/web#container-security-context[0]#baseline-configuration",
         "kubernetes:Deployment.default/web#pod-security-context#baseline-configuration",
@@ -1042,7 +1139,7 @@
       "indicator": "KSI-MLA-OSM",
       "family": "MLA",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-17.1\", \"ac-20.1\", \"au-11\", \"au-2\", \"au-4\", \"au-5\", \"au-6.3\"]; partial evidence only, not counted toward coverage: [\"au-2 (statement part(s): c)\"]; of those, needing a human attestation rather than a collector: [\"ac-20.1\", \"au-2 (statement part(s): a, b, d, e)\"]; whole-system control(s) judged against the declared boundary, not covered for: {\"au-11\": [\"okta:https://integrator-2677113.okta.com\"]}",
+      "reason": "missing IR evidence for control(s): [\"ac-17.1\", \"ac-20.1\", \"au-2\", \"au-4\", \"au-6.3\"]; partial evidence only, not counted toward coverage: [\"au-2 (statement part(s): c)\"]; of those, needing a human attestation rather than a collector: [\"ac-20.1\", \"au-2 (statement part(s): a, b, d, e)\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -1123,9 +1220,14 @@
     {
       "indicator": "KSI-SCR-MIT",
       "family": "SCR",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-20\", \"sa-10\", \"sa-11\", \"sa-22\", \"sa-9\", \"sc-18\", \"sr-5\"]; partial evidence only, not counted toward coverage: [\"sa-10 (statement part(s): a, b, c)\"]; of those, needing a human attestation rather than a collector: [\"ac-20\", \"sa-10 (statement part(s): d, e)\", \"sa-11\", \"sa-9\", \"sc-18\", \"sr-5\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "not_satisfied",
+      "reason": "1 of 12 referenced control(s) failed: [\"si-7.1\"] (evidenced by: [\"github:kernwill/substrate-self-test#integrity-check-frequency\"])",
+      "evidence": [
+        "github:kernwill/substrate-self-test#integrity-check-frequency"
+      ],
+      "failed_controls": [
+        "si-7.1"
+      ]
     },
     {
       "indicator": "KSI-SCR-MON",
@@ -1137,22 +1239,27 @@
     {
       "indicator": "KSI-SVC-ACM",
       "family": "SVC",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cm-7.1\", \"pl-9\", \"sa-5\", \"si-5\", \"sr-10\"]; of those, needing a human attestation rather than a collector: [\"sa-5\", \"si-5\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "not_satisfied",
+      "reason": "1 of 11 referenced control(s) failed: [\"pl-9\"] (evidenced by: [\"github:kernwill/substrate-self-test#central-management\"])",
+      "evidence": [
+        "github:kernwill/substrate-self-test#central-management"
+      ],
+      "failed_controls": [
+        "pl-9"
+      ]
     },
     {
       "indicator": "KSI-SVC-ASM",
       "family": "SVC",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-17.2\", \"ia-5.2\", \"ia-5.6\", \"sc-17\"]; of those, needing a human attestation rather than a collector: [\"ia-5.6\", \"sc-17 (statement part(s): b)\"]",
+      "reason": "missing IR evidence for control(s): [\"ia-5.2\", \"ia-5.6\", \"sc-17\"]; of those, needing a human attestation rather than a collector: [\"ia-5.6\", \"sc-17 (statement part(s): b)\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-SVC-EIS",
       "family": "SVC",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cm-7.1\", \"ma-2\", \"sc-39\", \"sr-10\"]; of those, needing a human attestation rather than a collector: [\"sc-39\"]",
+      "reason": "missing IR evidence for control(s): [\"cm-7.1\", \"ma-2\", \"sc-39\"]; of those, needing a human attestation rather than a collector: [\"sc-39\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
@@ -1166,36 +1273,43 @@
       "indicator": "KSI-SVC-RUD",
       "family": "SVC",
       "status": "undetermined",
-      "reason": "no IR evidence collected for any control this indicator references; of those, needing a human attestation rather than a collector: [\"si-12.3\", \"si-18.4\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for at least one referenced control"
+      "reason": "missing IR evidence for control(s): [\"si-18.4\"]; of those, needing a human attestation rather than a collector: [\"si-18.4\"]",
+      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-SVC-SIN",
       "family": "SVC",
       "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"ac-1\", \"ac-17.2\", \"sc-13\", \"sc-20\", \"sc-22\"]; of those, needing a human attestation rather than a collector: [\"ac-1\", \"sc-13\"]",
+      "reason": "missing IR evidence for control(s): [\"ac-1\", \"sc-13\", \"sc-20\", \"sc-22\"]; of those, needing a human attestation rather than a collector: [\"ac-1\", \"sc-13\"]",
       "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
     },
     {
       "indicator": "KSI-SVC-VCM",
       "family": "SVC",
-      "status": "satisfied",
-      "reason": "all 2 referenced control(s) have IR evidence",
+      "status": "not_satisfied",
+      "reason": "1 of 2 referenced control(s) failed: [\"si-7.1\"] (evidenced by: [\"github:kernwill/substrate-self-test#integrity-check-frequency\"])",
       "evidence": [
-        "github:kernwill/substrate-self-test#integrity-check-frequency",
-        "tls:aws:632839731153/us-east-2#session-authenticity",
-        "tls:aws:632839731153/us-west-2#session-authenticity",
-        "tls:github:kernwill/substrate-self-test#session-authenticity",
-        "tls:okta:https://integrator-2677113.okta.com#session-authenticity"
+        "github:kernwill/substrate-self-test#integrity-check-frequency"
       ],
-      "all_controls_judged": true
+      "failed_controls": [
+        "si-7.1"
+      ]
     },
     {
       "indicator": "KSI-SVC-VRI",
       "family": "SVC",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cm-8.3\", \"sc-13\", \"sr-10\"]; of those, needing a human attestation rather than a collector: [\"sc-13\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)"
+      "status": "not_satisfied",
+      "reason": "3 of 7 referenced control(s) failed: [\"cm-8.3\", \"si-7\", \"si-7.1\"] (evidenced by: [\"github:kernwill/substrate-self-test#integrity-check-frequency\", \"github:kernwill/substrate-self-test#integrity-verification\", \"github:kernwill/substrate-self-test#unauthorized-component-detection\"])",
+      "evidence": [
+        "github:kernwill/substrate-self-test#integrity-check-frequency",
+        "github:kernwill/substrate-self-test#integrity-verification",
+        "github:kernwill/substrate-self-test#unauthorized-component-detection"
+      ],
+      "failed_controls": [
+        "cm-8.3",
+        "si-7",
+        "si-7.1"
+      ]
     }
   ]
 }
