@@ -113,7 +113,7 @@ jobs:
       unmanaged: ${{ steps.inventory.outputs.unmanaged }}
       list: ${{ steps.inventory.outputs.list }}
     env:
-      SUBSTRATE_COMMIT: eaaea9d992652d218e94510cf898b0329a3b1409
+      SUBSTRATE_COMMIT: 9726dfd6f4f7c0f388cc169a066686f096e0911c
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

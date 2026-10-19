@@ -136,7 +136,7 @@
     {
       "Sid": "SubstrateInspectorCollector",
       "Effect": "Allow",
-      "Action": ["inspector2:BatchGetAccountStatus"],
+      "Action": ["inspector2:BatchGetAccountStatus", "inspector2:ListFindings"],
       "Resource": "*"
     },
     {
