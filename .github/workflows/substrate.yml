@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: 798d81838aad0d20032d3af7e658047be19fb73d
+  SUBSTRATE_COMMIT: eaaea9d992652d218e94510cf898b0329a3b1409
 
 jobs:
   verify:
@@ -115,10 +115,11 @@ jobs:
             --github-owner kernwill --github-repo substrate-self-test --github-token-path "$t/github.token"
           quiet "$s" collect-tls --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml --out "$t/tls.json"
           quiet "$s" collect-security-txt --domain rookwright.com --out "$t/security_txt.json"
+          quiet "$s" collect-components --source . --github-token-path "$t/github.token" --out "$t/components.json"
           rm -f "$t/okta.pem" "$t/github.token"
           # The binary is named, not "$s", so substrate can read from this
           # workflow that the gate judges the live system (cm-4.2).
           quiet "$RUNNER_TEMP/substrate" compile --source . --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml \
             --runtime "$t/runtime" --documents "$t/documents.json" --documents-root . --tls "$t/tls.json" \
-            --security-txt "$t/security_txt.json" --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
+            --security-txt "$t/security_txt.json" --components "$t/components.json" --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
           "$RUNNER_TEMP/substrate" gate --baseline substrate-baseline-live.json --current "$t/out/ksi_results.json"

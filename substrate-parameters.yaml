@@ -164,6 +164,16 @@ audit_failure_alerts:
   okta_silence_hours: 24
   max_days_between_drills: 35
 
+# Replacing unsupported components (sa-22). RDS engines are judged
+# against AWS's own support dates. HashiCorp publishes no per-version
+# support status, so Terraform providers and the Terraform CLI follow
+# HashiCorp's stated policy: only the newest major version is supported.
+# GitHub Actions count as supported only on these runtimes (node24 is the
+# current one; listing fewer can only make the check stricter).
+supported_components:
+  provider_support: latest_major
+  action_runtimes: [node24]
+
 # The nightly inventory (cm-8.3, pl-9): AWS resources in AWS Config's
 # inventory but neither in Terraform state nor created by AWS. Finding
 # one opens an incident issue. The exceptions are resources deliberately
