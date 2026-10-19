@@ -333,16 +333,19 @@ tasks:
     controls: [at-2, at-2.2, at-2.3, at-3, at-3.5, at-4, cp-3, ir-2, ir-2.3, sr-11.1]
     owner: kernwill
     signoff: [kernwill, elliskern]
+    # One issue each, signed off by the other person: nobody signs off
+    # their own training.
+    per_person: [kernwill, elliskern]
     every_days: 365
     complete_within_days: 30
     first_due: 2027-01-26
     checklist:
-      - "Each person completes security awareness training, including insider threat and social engineering (at-2, at-2.2, at-2.3)."
-      - "The Administrator completes role-based training for AWS, Okta and GitHub administration, including handling personal data (at-3, at-3.5)."
-      - "Both people walk through the contingency plan and the incident response plan, including a simulated event (cp-3, ir-2, ir-2.3)."
-      - "Both people are trained to spot counterfeit components (sr-11.1)."
-      - "Record who completed what and when, and keep the record (at-4)."
-    evidence: A comment listing each person, the training completed and the date, with a link to any completion record.
+      - "Complete security awareness training, including insider threat and social engineering (at-2, at-2.2, at-2.3)."
+      - "If you hold the Administrator role, complete role-based training for AWS, Okta and GitHub administration, including handling personal data (at-3, at-3.5)."
+      - "Walk through the contingency plan and the incident response plan, including a simulated event (cp-3, ir-2, ir-2.3)."
+      - "Complete training on spotting counterfeit components (sr-11.1)."
+      - "Link or attach your completion record (at-4)."
+    evidence: A comment listing the training completed and the date, with a link to the completion record. The other person reviews it and closes the issue.
 
   - id: annual-assessment
     title: Yearly security assessment
