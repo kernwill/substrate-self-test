@@ -154,6 +154,15 @@ privilege_reviews:
   review_within_hours: 168
   reviewers: [elliskern, kernwill]
 
+# Audit logging failures (au-5) alert the incident alert recipients
+# through an incident issue (audit_alerts.tf): CloudTrail stopped or
+# deleted, or Okta's archived System Log silent for this many hours. A
+# drill exercises the alert path monthly; acknowledge it like the
+# incident drill.
+audit_failure_alerts:
+  okta_silence_hours: 24
+  max_days_between_drills: 35
+
 # The nightly inventory (cm-8.3, pl-9): AWS resources in AWS Config's
 # inventory but neither in Terraform state nor created by AWS. Finding
 # one opens an incident issue. The exceptions are resources deliberately
