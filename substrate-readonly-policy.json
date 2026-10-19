@@ -179,6 +179,12 @@
       "Effect": "Allow",
       "Action": ["events:ListEventBuses", "events:ListRules", "events:ListTargetsByRule", "logs:DescribeLogGroups", "logs:DescribeLogStreams"],
       "Resource": "*"
+    },
+    {
+      "Sid": "SubstrateAuditAlertCollector",
+      "Effect": "Allow",
+      "Action": ["cloudwatch:DescribeAlarms"],
+      "Resource": "*"
     }
   ]
 }

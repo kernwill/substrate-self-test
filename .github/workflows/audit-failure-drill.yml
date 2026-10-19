@@ -1,0 +1,55 @@
+name: Audit failure drill
+
+# Once a month, set the Okta System Log silence alarm to ALARM with a
+# reason starting "Drill" (au-5, audit_alerts.tf). EventBridge must open
+# a [DRILL] audit-failure issue within 15 minutes, through the same
+# destination a real audit logging failure uses. The Administrator
+# acknowledges it by closing it with a comment. The alarm returns to OK
+# on its next evaluation. This job fails if the issue doesn't appear.
+on:
+  schedule:
+    - cron: "0 14 15 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: audit-failure-drill
+  cancel-in-progress: false
+
+jobs:
+  drill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      id-token: write
+      issues: read
+    steps:
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::632839731153:role/substrate-incident-drill
+          aws-region: us-east-2
+          role-session-name: audit-failure-drill-${{ github.run_id }}
+      - name: Set the alarm
+        id: set
+        run: |
+          echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          aws cloudwatch set-alarm-state --alarm-name substrate-audit-okta-log-silent \
+            --state-value ALARM --state-reason "Drill: monthly audit failure alert drill (au-5)"
+          echo "Alarm set."
+      - name: Wait for the drill issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          STARTED: ${{ steps.set.outputs.started }}
+        run: |
+          for i in $(seq 1 30); do
+            n="$(gh issue list --label audit-failure --label drill --state all --search "created:>=$STARTED" --json number --jq '.[0].number')"
+            if [ -n "$n" ]; then
+              echo "Drill issue #$n opened."
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "No drill issue within 15 minutes: the audit failure alert path failed. Check the dead-letter queue substrate-incident-issues-dlq."
+          exit 1
