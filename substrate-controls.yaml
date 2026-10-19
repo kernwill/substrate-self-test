@@ -338,7 +338,7 @@ tasks:
     per_person: [kernwill, elliskern]
     every_days: 365
     complete_within_days: 30
-    first_due: 2027-01-26
+    first_due: 2026-11-05
     checklist:
       - "Complete security awareness training, including insider threat and social engineering (at-2, at-2.2, at-2.3)."
       - "If you hold the Administrator role, complete role-based training for AWS, Okta and GitHub administration, including handling personal data (at-3, at-3.5)."
