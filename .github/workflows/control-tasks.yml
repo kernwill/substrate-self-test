@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: 9726dfd6f4f7c0f388cc169a066686f096e0911c
+  SUBSTRATE_COMMIT: 5b042ae39f3204bc678cb902694cdd3b98c31c4a
 
 jobs:
   open-due-tasks:

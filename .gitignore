@@ -8,3 +8,6 @@ okta.env
 *.tfstate.*
 .terraform.lock.hcl.bak
 crash.log
+
+# Saved Terraform plans are applied, then deleted; never committed.
+*.tfplan

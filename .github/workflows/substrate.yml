@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: 9726dfd6f4f7c0f388cc169a066686f096e0911c
+  SUBSTRATE_COMMIT: 5b042ae39f3204bc678cb902694cdd3b98c31c4a
 
 jobs:
   verify:
@@ -111,6 +111,10 @@ jobs:
           quiet "$s" collect --out "$t/runtime" --okta-org-url "$OKTA_ORG_URL" --okta-client-id "$OKTA_CLIENT_ID" \
             --okta-key-id "$OKTA_KEY_ID" --okta-private-key "$t/okta.pem" --aws-audit-regions us-east-2,us-west-2 \
             --github-owner kernwill --github-repo substrate-self-test --github-token-path "$t/github.token"
+          # The second declared Region (substrate ADR 0028): its own run,
+          # whose per-Region services compile judges beside us-east-2's.
+          quiet env AWS_REGION=us-west-2 "$s" collect --out "$t/runtime-us-west-2" --okta-org-url "$OKTA_ORG_URL" --okta-client-id "$OKTA_CLIENT_ID" \
+            --okta-key-id "$OKTA_KEY_ID" --okta-private-key "$t/okta.pem" --aws-audit-regions us-east-2,us-west-2
           quiet "$s" collect-documents --dir docs/policies --out "$t/documents.json" \
             --github-owner kernwill --github-repo substrate-self-test --github-token-path "$t/github.token"
           quiet "$s" collect-tls --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml --out "$t/tls.json"
@@ -120,6 +124,6 @@ jobs:
           # The binary is named, not "$s", so substrate can read from this
           # workflow that the gate judges the live system (cm-4.2).
           quiet "$RUNNER_TEMP/substrate" compile --source . --boundary substrate-boundary.yaml --parameters substrate-parameters.yaml \
-            --runtime "$t/runtime" --documents "$t/documents.json" --documents-root . --tls "$t/tls.json" \
+            --runtime "$t/runtime" --region-runtime "$t/runtime-us-west-2" --documents "$t/documents.json" --documents-root . --tls "$t/tls.json" \
             --security-txt "$t/security_txt.json" --components "$t/components.json" --register substrate-controls.yaml --as-of "$(date -u +%Y-%m-%d)" --out "$t/out"
           "$RUNNER_TEMP/substrate" gate --baseline substrate-baseline-live.json --current "$t/out/ksi_results.json"
