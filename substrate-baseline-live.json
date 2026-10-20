@@ -1,8 +1,8 @@
 {
   "schema_version": "3",
-  "approved_at": "2026-10-20T14:44:57.934104Z",
+  "approved_at": "2026-10-20T18:04:19.467109Z",
   "approved_by": "Will Kern <kernwill@yahoo.com>",
-  "git_commit": "9d01903da94ca3c01b68a8db22c0a79949c4eff2",
+  "git_commit": "02d5857bd01c42e6b48481fcf5f637ac22348856",
   "results": [
     {
       "indicator": "KSI-CED-RAT",
@@ -15,11 +15,13 @@
       "indicator": "KSI-CMT-LMC",
       "family": "CMT",
       "status": "not_satisfied",
-      "reason": "1 of 7 referenced control(s) failed: [\"cm-8.3\"] (evidenced by: [\"github:kernwill/substrate-self-test#unauthorized-component-detection\"])",
+      "reason": "2 of 7 referenced control(s) failed: [\"cm-4.2\", \"cm-8.3\"] (evidenced by: [\"github:kernwill/substrate-self-test#change-verification\", \"github:kernwill/substrate-self-test#unauthorized-component-detection\"])",
       "evidence": [
+        "github:kernwill/substrate-self-test#change-verification",
         "github:kernwill/substrate-self-test#unauthorized-component-detection"
       ],
       "failed_controls": [
+        "cm-4.2",
         "cm-8.3"
       ],
       "verified_controls": {
@@ -118,21 +120,20 @@
     {
       "indicator": "KSI-CMT-VTD",
       "family": "CMT",
-      "status": "satisfied",
-      "reason": "all 4 referenced control(s) have IR evidence",
+      "status": "not_satisfied",
+      "reason": "1 of 4 referenced control(s) failed: [\"cm-4.2\"] (evidenced by: [\"github:kernwill/substrate-self-test#change-verification\"])",
       "evidence": [
-        "flaws:kernwill/substrate-self-test#scanning",
-        "github:kernwill/substrate-self-test#branch-protection-reviews",
-        "github:kernwill/substrate-self-test#branch-protection-status-checks",
         "github:kernwill/substrate-self-test#change-verification"
+      ],
+      "failed_controls": [
+        "cm-4.2"
       ],
       "verified_controls": {
         "cm-3": "machine",
         "cm-3.2": "machine",
         "cm-4.2": "machine",
         "si-2": "machine"
-      },
-      "all_controls_judged": true
+      }
     },
     {
       "indicator": "KSI-CNA-DFP",
@@ -1866,7 +1867,7 @@
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/Opensearch.7/finding/fea3a0ce-4868-46a8-a7d7-de28263eb49f#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/Opensearch.8/finding/d44ea654-8f9d-40bb-bd7f-adedd42f175b#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/PCA.1/finding/aa3d82d5-fe7f-4328-92d9-5e5861c1cafb#finding",
-        "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.1/finding/0f9a3524-d396-4150-99e3-c84272922a91#finding",
+        "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.1/finding/7aa1d94e-1926-41e6-9c98-120b33bc7b46#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.10/finding/b3ea865b-2ff0-4b7a-a0b7-a0e13b577fa4#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.11/finding/f112b379-154a-4a56-a33b-89d3d64de705#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.12/finding/9395dc6d-08de-4bf2-9797-bc93d0262e4e#finding",
@@ -1891,7 +1892,7 @@
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.37/finding/493503a1-7490-49da-8a44-2a794d7a9889#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.38/finding/39e7a3c5-df75-4b0e-904e-0bbabf66f642#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.39/finding/465ed98e-7a10-4155-8c0f-e3fabaa5cc15#finding",
-        "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.4/finding/80ab9c82-6425-4ef9-8946-5ffd540038d9#finding",
+        "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.4/finding/354128fd-f829-47ac-b216-0a97b92d012e#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.40/finding/bceaaa50-0bd1-4b10-a522-693cbacd5fa4#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.41/finding/c7b04db1-2228-46f3-aef9-265a991ed257#finding",
         "region:us-west-2/aws:securityhub-finding:arn:aws:securityhub:us-west-2:632839731153:security-control/RDS.42/finding/b5599605-4e74-41c3-897e-4cca70cb69ee#finding",
@@ -2154,9 +2155,14 @@
     {
       "indicator": "KSI-RPL-TRC",
       "family": "RPL",
-      "status": "undetermined",
-      "reason": "missing IR evidence for control(s): [\"cp-2.1\", \"cp-4.1\", \"ir-3.2\"]; of those, needing a human attestation rather than a collector: [\"cp-2.1\", \"cp-4.1\", \"ir-3.2\"]",
-      "remediation_hint": "add a frontend collector or IR mapping producing a node for the missing control(s)",
+      "status": "not_satisfied",
+      "reason": "1 of 10 referenced control(s) failed: [\"cp-4\"] (evidenced by: [\"drills:aws-backup#contingency_plan_testing\"])",
+      "evidence": [
+        "drills:aws-backup#contingency_plan_testing"
+      ],
+      "failed_controls": [
+        "cp-4"
+      ],
       "verified_controls": {
         "cp-10": "machine",
         "cp-2.3": "document",
