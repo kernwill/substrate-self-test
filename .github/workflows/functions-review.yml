@@ -1,0 +1,38 @@
+name: Functions review
+
+# Monthly review of the system's functions, ports, protocols and services
+# (cm-7.1). The issue lists what the system declares: the inbound access
+# allowed (substrate fails cm-7.1 if any other inbound rule exists, in any
+# Region) and the AWS services it uses. A declared reviewer confirms each
+# is still needed and secure, removes any that isn't through a pull
+# request, and closes the issue with a comment.
+on:
+  schedule:
+    - cron: "0 15 8 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  open-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Open the review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create functions-review --color 0E8A16 --description "Monthly review of functions, ports and services (cm-7.1)" --force > /dev/null
+          ingress="$(yq -r '.functions_review.allowed_ingress // [] | .[]' substrate-parameters.yaml | sed 's/^/- /')"
+          [ -n "$ingress" ] || ingress="- None: nothing accepts inbound connections."
+          services="$(yq -r '.transmission.aws_services // [] | .[]' substrate-parameters.yaml | sed 's/^/- /')"
+          body="$(printf 'Monthly review of functions, ports, protocols and services (CM-7(1)).\n\n**Inbound access allowed** (security groups, every Region; substrate fails cm-7.1 on anything else):\n\n%s\n\n**AWS services in use:**\n\n%s\n\n**Also review:** Okta applications and sign-on policies, and GitHub Actions workflows and repository settings.\n\nFor each item, confirm it is still needed and configured securely. Remove anything that is not, through a pull request (and from `substrate-parameters.yaml`). Then close this issue with a comment saying what you reviewed and changed.' "$ingress" "$services")"
+          gh issue create --title "Functions review: $(date -u +%Y-%m)" --label functions-review \
+            --assignee kernwill --assignee elliskern --body "$body"

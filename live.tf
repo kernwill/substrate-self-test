@@ -447,3 +447,17 @@ resource "aws_db_instance" "app_replica" {
   skip_final_snapshot    = true
   deletion_protection    = false
 }
+
+# --- cm-7.1: least functionality. Each default VPC's default security
+# group came with one rule allowing all traffic between its members.
+# Nothing uses either group (no network interfaces, checked 2026-10-19),
+# so both are adopted here with no rules at all: the system has no
+# inbound access, which substrate-parameters.yaml declares. ---
+resource "aws_default_security_group" "default" {
+  vpc_id = data.aws_vpc.default.id
+}
+
+resource "aws_default_security_group" "default_west" {
+  provider = aws.west
+  vpc_id   = data.aws_vpc.default_west.id
+}
