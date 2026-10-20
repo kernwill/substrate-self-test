@@ -155,6 +155,18 @@ privilege_reviews:
   review_within_hours: 168
   reviewers: [elliskern, kernwill]
 
+# Functions, ports, protocols and services (cm-7.1): reviewed monthly
+# (functions-review.yml opens the issue on the 8th; a reviewer closes it
+# with a comment within a week). The inbound security group rules deemed
+# necessary, in every Region, as substrate names them ("<group>
+# <protocol>[:<from>-<to>] from <source>"). None: nothing in the system
+# accepts inbound connections.
+functions_review:
+  max_days_between_reviews: 35
+  review_within_hours: 168
+  reviewers: [elliskern, kernwill]
+  allowed_ingress: []
+
 # Audit logging failures (au-5) alert the incident alert recipients
 # through an incident issue (audit_alerts.tf): CloudTrail stopped or
 # deleted, or Okta's archived System Log silent for this many hours. A
