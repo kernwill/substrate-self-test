@@ -124,8 +124,10 @@ predates `live.tf` and is kept for reference.
 **Collect with the read-only role, never the admin user.** `live.tf`
 creates the `substrate-collector` role, holding exactly
 `substrate-readonly-policy.json` (a copy of substrate's
-`docs/aws-readonly-policy.json`). Add a profile that assumes it from
-your default credentials:
+`docs/aws-readonly-policy.json`), plus substrate's opt-in
+`docs/aws-trail-activity-policy.json` filled in for the trail's log
+group (ac-6.2 reads the trail's records; since 2026-10-21). Add a
+profile that assumes it from your default credentials:
 
 ```
 # ~/.aws/config

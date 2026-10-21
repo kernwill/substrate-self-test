@@ -23,7 +23,8 @@ See `SUBSTRATE-TESTING.md` for exact instructions on how to run
 - `substrate-boundary.yaml` - the declared assessment boundary.
 - `substrate-readonly-policy.json` - a copy of substrate's published
   read-only AWS policy, held by the `substrate-collector` role in
-  `live.tf`.
+  `live.tf`. The role also reads the trail's log group (substrate's
+  opt-in `docs/aws-trail-activity-policy.json`, for ac-6.2).
 - `docs/policies/` - policy documents for substrate's artifact tier,
   approved through pull requests.
 - `.github/workflows/policy-review-reminder.yml` - opens an issue when
