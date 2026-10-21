@@ -147,6 +147,41 @@ resource "aws_cloudtrail" "main" {
   cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
   cloud_watch_logs_role_arn     = aws_iam_role.trail_to_logs.arn
   depends_on                    = [aws_s3_bucket_policy.audit, aws_iam_role_policy.trail_to_logs]
+
+  # Advanced selectors (2026-10-21) replace the default basic one, which
+  # recorded management events only. The first keeps every management
+  # event, reads and writes (au-2, au-12; a secret read is one).
+  advanced_event_selector {
+    name = "Management events"
+    field_selector {
+      field  = "eventCategory"
+      equals = ["Management"]
+    }
+  }
+
+  # ac-6.2: S3 object reads and writes (data events), so substrate can
+  # check that no one with security access uses the system's data with
+  # a privileged identity. Every bucket but the audit bucket: its writes
+  # are CloudTrail's and Config's own deliveries, and recording them
+  # would record each delivery of the records of the last. Reading audit
+  # logs is a security function anyway (declared in
+  # substrate-parameters.yaml). $0.10 per 100,000 events (checked
+  # 2026-10-21); the self-test makes a few thousand a month.
+  advanced_event_selector {
+    name = "S3 object events except the audit bucket"
+    field_selector {
+      field  = "eventCategory"
+      equals = ["Data"]
+    }
+    field_selector {
+      field  = "resources.type"
+      equals = ["AWS::S3::Object"]
+    }
+    field_selector {
+      field           = "resources.ARN"
+      not_starts_with = ["${aws_s3_bucket.audit.arn}/"]
+    }
+  }
 }
 
 # --- cm-2.2, cm-6: AWS Config recording all supported resource types. ---
@@ -256,6 +291,24 @@ resource "aws_iam_role" "substrate_collector" {
 resource "aws_iam_role_policy_attachment" "substrate_collector" {
   role       = aws_iam_role.substrate_collector.name
   policy_arn = aws_iam_policy.substrate_readonly.arn
+}
+
+# ac-6.2: reading the trail's records, which the read-only policy never
+# allows (it reads no log or object contents). Substrate's opt-in
+# docs/aws-trail-activity-policy.json, filled in for this trail's log
+# group only.
+resource "aws_iam_role_policy" "substrate_collector_trail_activity" {
+  name = "substrate-trail-activity"
+  role = aws_iam_role.substrate_collector.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "SubstrateTrailActivityReadTrailLogGroup"
+      Effect   = "Allow"
+      Action   = ["logs:FilterLogEvents"]
+      Resource = ["${aws_cloudwatch_log_group.trail.arn}:*"]
+    }]
+  })
 }
 
 # --- ca-7: one AWS Config managed rule, so the recorder produces
