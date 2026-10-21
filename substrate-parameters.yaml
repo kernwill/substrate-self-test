@@ -65,6 +65,18 @@ access:
     # so his approvals satisfy branch protection).
     - kernwill
     - elliskern
+non_privileged_use:
+  # ac-6.2: the administrator uses the non-privileged will+daily account
+  # for everything that isn't administration (set up 2026-10-20), and
+  # signs in as will+1234 only through the admin URL. From this date,
+  # substrate fails ac-6.2 if any Okta admin signs in to an app not
+  # listed here. AWS and GitHub aren't judged yet, so ac-6.2 stays
+  # undetermined while they're in the boundary.
+  since: 2026-10-21
+  # Okta Admin Console: administration. Okta Authenticator: setting up
+  # or changing one's own sign-in methods (Okta Verify), which is
+  # account security.
+  okta_security_apps: [Okta Admin Console, Okta Authenticator]
 integrity:
   # The nightly check for changes made outside a reviewed pull request
   # (si-7). check runs terraform plan; report-drift runs only when the
