@@ -44,10 +44,77 @@ resource "aws_s3_bucket_versioning" "audit" {
   versioning_configuration { status = "Enabled" }
 }
 
+# --- sc-13 (2026-10-23): the audit logs are encrypted under a customer
+# managed KMS key, so they are protected by KMS's validated HSMs (FIPS
+# 140-3 certificate #4884) rather than S3's own encryption (SSE-S3),
+# whose module AWS doesn't name. A customer managed key because
+# CloudTrail and Config write as AWS services, which AWS's managed
+# aws/s3 key doesn't allow. The statements are AWS's documented ones:
+# CloudTrail's for trail log encryption, limited to this trail, and
+# Config's for delivery-channel encryption, limited to this account.
+# Readers (the administrator) are allowed through IAM. ---
+resource "aws_kms_key" "audit" {
+  description             = "substrate self-test audit logs (CloudTrail, Config)"
+  enable_key_rotation     = true
+  deletion_window_in_days = 30
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "EnableIAMUserPermissions"
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${local.suffix}:root" }
+        Action    = "kms:*"
+        Resource  = "*"
+      },
+      {
+        Sid       = "AllowCloudTrailEncryptLogs"
+        Effect    = "Allow"
+        Principal = { Service = "cloudtrail.amazonaws.com" }
+        Action    = "kms:GenerateDataKey*"
+        Resource  = "*"
+        Condition = {
+          StringEquals = { "aws:SourceArn" = local.trail_arn }
+          StringLike   = { "kms:EncryptionContext:aws:cloudtrail:arn" = "arn:aws:cloudtrail:*:${local.suffix}:trail/*" }
+        }
+      },
+      {
+        Sid       = "AllowCloudTrailAccess"
+        Effect    = "Allow"
+        Principal = { Service = "cloudtrail.amazonaws.com" }
+        Action    = "kms:DescribeKey"
+        Resource  = "*"
+        Condition = { StringEquals = { "aws:SourceArn" = local.trail_arn } }
+      },
+      {
+        Sid       = "AWSConfigKMSPolicy"
+        Effect    = "Allow"
+        Principal = { Service = "config.amazonaws.com" }
+        Action    = ["kms:Decrypt", "kms:GenerateDataKey"]
+        Resource  = "*"
+        Condition = { StringEquals = { "AWS:SourceAccount" = local.suffix } }
+      },
+    ]
+  })
+}
+
+resource "aws_kms_alias" "audit" {
+  name          = "alias/substrate-self-test-audit"
+  target_key_id = aws_kms_key.audit.key_id
+}
+
+locals {
+  # Literal, not aws_cloudtrail.main.arn: the trail refers to the key.
+  trail_arn = "arn:aws:cloudtrail:us-east-2:${local.suffix}:trail/substrate-self-test"
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "audit" {
   bucket = aws_s3_bucket.audit.id
   rule {
-    apply_server_side_encryption_by_default { sse_algorithm = "AES256" }
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.audit.arn
+    }
   }
 }
 
@@ -146,6 +213,7 @@ resource "aws_cloudtrail" "main" {
   enable_log_file_validation    = true
   cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
   cloud_watch_logs_role_arn     = aws_iam_role.trail_to_logs.arn
+  kms_key_id                    = aws_kms_key.audit.arn # sc-13
   depends_on                    = [aws_s3_bucket_policy.audit, aws_iam_role_policy.trail_to_logs]
 
   # Advanced selectors (2026-10-21) replace the default basic one, which
@@ -202,6 +270,7 @@ resource "aws_config_delivery_channel" "main" {
   name           = "default"
   s3_bucket_name = aws_s3_bucket.audit.id
   s3_key_prefix  = "config"
+  s3_kms_key_arn = aws_kms_key.audit.arn # sc-13
   depends_on     = [aws_config_configuration_recorder.main, aws_s3_bucket_policy.audit]
 }
 
@@ -230,6 +299,7 @@ resource "aws_config_delivery_channel" "west" {
   name           = "default"
   s3_bucket_name = aws_s3_bucket.audit.id
   s3_key_prefix  = "config"
+  s3_kms_key_arn = aws_kms_key.audit.arn # sc-13
   depends_on     = [aws_config_configuration_recorder.west, aws_s3_bucket_policy.audit]
 }
 
