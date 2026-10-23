@@ -20,10 +20,14 @@ resource "aws_s3_bucket_versioning" "tfstate" {
   versioning_configuration { status = "Enabled" }
 }
 
+# sc-13 (2026-10-23): KMS (AWS's managed aws/s3 key, in KMS's validated
+# HSMs) instead of SSE-S3, whose module AWS doesn't name. Reading state
+# needs no new permission: the aws/s3 key serves any principal S3
+# allows. Earlier versions stay SSE-S3 until they're removed.
 resource "aws_s3_bucket_server_side_encryption_configuration" "tfstate" {
   bucket = aws_s3_bucket.tfstate.id
   rule {
-    apply_server_side_encryption_by_default { sse_algorithm = "AES256" }
+    apply_server_side_encryption_by_default { sse_algorithm = "aws:kms" }
   }
 }
 
