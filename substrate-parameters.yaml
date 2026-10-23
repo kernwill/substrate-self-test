@@ -80,9 +80,11 @@ non_privileged_use:
   # AWS: no principal with security access (access.aws above, plus root)
   # reads or writes S3 objects outside these buckets, or reads any
   # secret. The trail has recorded S3 data events since the
-  # 2026-10-21 14:04 UTC apply (PR #65); this is the next day, after
-  # the change took effect.
-  aws_since: 2026-10-22
+  # 2026-10-21 14:04 UTC apply (PR #65). Moved from 2026-10-22 to the
+  # day after the trail last changed: PR #67 set its KMS key
+  # (2026-10-23 20:52 UTC), and a trail change after this date stops
+  # the judgment.
+  aws_since: 2026-10-24
   # The audit bucket (logs: reviewing them is a security function; the
   # trail doesn't record its objects) and the Terraform state bucket
   # (the infrastructure's configuration). The application buckets are
