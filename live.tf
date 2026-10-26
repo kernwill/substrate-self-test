@@ -584,3 +584,27 @@ resource "aws_default_security_group" "default_west" {
   provider = aws.west
   vpc_id   = data.aws_vpc.default_west.id
 }
+
+# --- Security Hub SSM.7 and EC2.182 (2026-10-26, found in the weekly
+# audit log review, #70): account settings that stop SSM documents and
+# EBS snapshots from being shared publicly. Both were off in both
+# Regions. Neither blocks sharing with named accounts. ---
+resource "aws_ssm_service_setting" "documents_no_public_sharing" {
+  setting_id    = "arn:aws:ssm:us-east-2:${local.suffix}:servicesetting/ssm/documents/console/public-sharing-permission"
+  setting_value = "Disable"
+}
+
+resource "aws_ssm_service_setting" "documents_no_public_sharing_west" {
+  provider      = aws.west
+  setting_id    = "arn:aws:ssm:us-west-2:${local.suffix}:servicesetting/ssm/documents/console/public-sharing-permission"
+  setting_value = "Disable"
+}
+
+resource "aws_ebs_snapshot_block_public_access" "main" {
+  state = "block-all-sharing"
+}
+
+resource "aws_ebs_snapshot_block_public_access" "west" {
+  provider = aws.west
+  state    = "block-all-sharing"
+}
