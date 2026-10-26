@@ -74,8 +74,7 @@ non_privileged_use:
   # for everything that isn't administration (set up 2026-10-20), and
   # signs in as will+1234 only through the admin URL. From this date,
   # substrate fails ac-6.2 if any Okta admin signs in to an app not
-  # listed here. GitHub isn't judged yet, so ac-6.2 stays undetermined
-  # while the repository is in the boundary.
+  # listed here.
   since: 2026-10-21
   # Okta Admin Console: administration. Okta Authenticator: setting up
   # or changing one's own sign-in methods (Okta Verify), which is
@@ -99,6 +98,13 @@ non_privileged_use:
   # secret (the issue-writer token) is never needed: rotation uses
   # update-connection, which writes it.
   aws_security_secrets: []
+  # GitHub: no repository admin (rookwright-admin, the organization's
+  # owner) authors an issue, pull request, comment, review or commit;
+  # everyday work is done as kernwill (write). The repository moved to
+  # rookwright-test on 2026-10-26, and kernwill was admin until then:
+  # privilege is taken at collection, so this must be after the last
+  # removal of admin, hence the next day.
+  github_since: 2026-10-27
 integrity:
   # The nightly check for changes made outside a reviewed pull request
   # (si-7). check runs terraform plan; report-drift runs only when the
