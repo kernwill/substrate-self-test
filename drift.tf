@@ -61,6 +61,18 @@ resource "aws_s3_bucket_policy" "tfstate" {
 # with their immutable IDs (kernwill = 66508, substrate-self-test =
 # 1408966262; seen in CloudTrail 2026-10-09), so a repository recreated
 # under the same name couldn't assume it. ---
+# The repository is moving to the rookwright-test organization (ID
+# 348438719; ac-6.2, decided 2026-10-21). A transfer keeps the
+# repository's ID but changes the owner in the subject, so until it's
+# done both subjects are trusted: today's, and the one after the
+# transfer. The old one is removed right after the transfer.
+locals {
+  github_main_subjects = [
+    "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main",
+    "repo:rookwright-test@348438719/substrate-self-test@1408966262:ref:refs/heads/main",
+  ]
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
   url            = "https://token.actions.githubusercontent.com"
   client_id_list = ["sts.amazonaws.com"]
@@ -77,7 +89,7 @@ resource "aws_iam_role" "drift_check" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = local.github_main_subjects
         }
       }
     }]

@@ -14,7 +14,7 @@ resource "aws_iam_role" "incident_drill" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = local.github_main_subjects
         }
       }
     }]
