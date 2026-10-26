@@ -327,7 +327,7 @@ already applies to AWS); nothing it does creates or modifies anything.
 
 ## 7. Exercise the GitHub collector
 
-This repo is public at https://github.com/kernwill/substrate-self-test
+This repo is public at https://github.com/rookwright-test/substrate-self-test
 (public because branch protection and secret scanning are free only on
 public repos under GitHub Free). `main` is protected: 1 approving
 review, the `test` check, no force-pushes or deletions, and the rule
@@ -335,7 +335,14 @@ applies to admins (`sa-10` requires that). Secret scanning and push
 protection are on.
 
 Create a fine-grained token for this repository only, with Repository
-permissions Administration, Environments and Metadata, all Read-only.
+permissions Administration, Environments and Metadata, all Read-only,
+resource owner `rookwright-test`. **Create it as `rookwright-admin`**,
+the organization's admin account: a fine-grained token can do no more
+than its owner, and reading branch protection needs admin, which
+`kernwill` (write) no longer has since the move (2026-10-26). Reading
+security settings is a security function, so this is within the admin
+account's declared use (ac-6.2). The same token is the repository
+secret `SUBSTRATE_GITHUB_TOKEN`.
 Save it to a file without pasting it anywhere: put the `pbpaste`
 command in your shell first, then copy the token, then run it.
 
@@ -348,7 +355,7 @@ Then add the GitHub flags to the collect run:
 ```
 ./collect-okta.sh --out /tmp/self-test-runtime \
   --aws-audit-regions us-east-2,us-west-2 \
-  --github-owner kernwill --github-repo substrate-self-test \
+  --github-owner rookwright-test --github-repo substrate-self-test \
   --github-token-path ~/.substrate/github/self-test.token
 ```
 
@@ -375,7 +382,7 @@ months.
 cd /Users/willkern/substrate-self-test
 ../substrate/bin/substrate collect-documents --dir docs/policies \
   --out /tmp/self-test-documents.json \
-  --github-owner kernwill --github-repo substrate-self-test \
+  --github-owner rookwright-test --github-repo substrate-self-test \
   --github-token-path ~/.substrate/github/self-test.token
 
 ../substrate/bin/substrate compile --source . \
@@ -460,7 +467,8 @@ deleted. Sample findings from drills are labelled `drill`.
 
 The GitHub token is never in Terraform. After the first apply, set it on
 the EventBridge connection once, from a fine-grained token limited to
-this repository with only Issues: Read and write, saved at
+this repository with only Issues: Read and write (created by `kernwill`,
+resource owner `rookwright-test`; write access is enough), saved at
 `~/.substrate/github/issues-writer.token`:
 
 ```

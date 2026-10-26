@@ -10,7 +10,7 @@ Effective 2026-10-07. Reviewed at least every 3 months.
 ## The change control element
 
 Configuration change control for the self-test environment is the pull
-request review on `main` in `kernwill/substrate-self-test`. Every
+request review on `main` in `rookwright-test/substrate-self-test`. Every
 change to Terraform, Kubernetes manifests, CI, the boundary declaration
 and these documents goes through it.
 

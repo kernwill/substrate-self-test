@@ -58,17 +58,15 @@ resource "aws_s3_bucket_policy" "tfstate" {
 # --- si-7: GitHub Actions reaches AWS by OIDC. Only workflows running
 # on main, which changes only through a reviewed pull request, can
 # assume the role. GitHub's token subject names the owner and repository
-# with their immutable IDs (kernwill = 66508, substrate-self-test =
-# 1408966262; seen in CloudTrail 2026-10-09), so a repository recreated
-# under the same name couldn't assume it. ---
-# The repository is moving to the rookwright-test organization (ID
-# 348438719; ac-6.2, decided 2026-10-21). A transfer keeps the
-# repository's ID but changes the owner in the subject, so until it's
-# done both subjects are trusted: today's, and the one after the
-# transfer. The old one is removed right after the transfer.
+# with their immutable IDs (rookwright-test = 348438719,
+# substrate-self-test = 1408966262; before the move, kernwill = 66508),
+# so a repository recreated under the same name couldn't assume it. ---
+# The repository moved from kernwill to the rookwright-test organization
+# (ID 348438719) on 2026-10-26, for ac-6.2. The transfer kept the
+# repository's ID; only the owner in the subject changed. Both subjects
+# were trusted during the move (PR #72); only this one is now.
 locals {
   github_main_subjects = [
-    "repo:kernwill@66508/substrate-self-test@1408966262:ref:refs/heads/main",
     "repo:rookwright-test@348438719/substrate-self-test@1408966262:ref:refs/heads/main",
   ]
 }

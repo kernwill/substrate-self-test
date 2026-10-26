@@ -61,8 +61,12 @@ access:
     # Substrate's collector app (Read-only Administrator).
     - 0oa18e2pm9kK4q9K3698
   github:
-    # The administrator (admin) and the independent reviewer (write,
-    # so his approvals satisfy branch protection).
+    # Since the move to the rookwright-test organization (2026-10-26):
+    # the separate admin account (organization owner, so admin on the
+    # repository), used for administration only (ac-6.2); the
+    # administrator's everyday account (write); and the independent
+    # reviewer (write, so his approvals satisfy branch protection).
+    - rookwright-admin
     - kernwill
     - elliskern
 non_privileged_use:

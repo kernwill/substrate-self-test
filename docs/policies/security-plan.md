@@ -22,7 +22,7 @@ declared in `substrate-boundary.yaml`:
 | AWS account, us-east-2 | S3 buckets (`app_data`, `app_logs`, the audit bucket), a KMS key, a multi-Region CloudTrail trail with CloudWatch Logs, an AWS Config recorder and one managed rule, Resolver DNSSEC validation on the default VPC, an encrypted EBS volume, an encrypted PostgreSQL instance that holds no data and has no network access, GuardDuty with malware protection, Security Hub, Inspector and Macie |
 | AWS account, us-west-2 | The database's replicated automated backups and an encrypted read replica, with their own KMS key and a security group with no rules |
 | Okta org | Workforce identity for the administrator and the substrate collector app |
-| GitHub repository `kernwill/substrate-self-test` | Infrastructure code, Kubernetes manifests, CI, and these documents |
+| GitHub repository `rookwright-test/substrate-self-test` | Infrastructure code, Kubernetes manifests, CI, and these documents |
 
 The Kubernetes manifests in `k8s/` (a Deployment, NetworkPolicy, Secret
 and ConfigMap) are **outside the boundary** because they have never been
