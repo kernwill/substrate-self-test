@@ -332,11 +332,16 @@ This repo is public at https://github.com/rookwright-test/substrate-self-test
 public repos under GitHub Free). `main` is protected: 1 approving
 review, the `test` check, no force-pushes or deletions, and the rule
 applies to admins (`sa-10` requires that). Secret scanning and push
-protection are on.
+protection are on. **Transferring the repository turned both off**
+(2026-10-26, found as an si-4 failure); re-enable them under Settings,
+Code security, after any transfer.
 
 Create a fine-grained token for this repository only, with Repository
-permissions Administration, Environments and Metadata, all Read-only,
-resource owner `rookwright-test`. **Create it as `rookwright-admin`**,
+permissions Administration, Environments, Dependabot alerts and
+Metadata, all Read-only, resource owner `rookwright-test`. (Dependabot
+alerts was missing from this list until 2026-10-26: si-2 reads the
+alerts, which no public read allows, and the first live run after the
+move lost si-2.) **Create it as `rookwright-admin`**,
 the organization's admin account: a fine-grained token can do no more
 than its owner, and reading branch protection needs admin, which
 `kernwill` (write) no longer has since the move (2026-10-26). Reading
