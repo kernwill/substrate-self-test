@@ -93,11 +93,15 @@ non_privileged_use:
   # (the infrastructure's configuration). The application buckets are
   # nonsecurity data.
   aws_security_buckets: [substrate-self-test-audit-632839731153, substrate-self-test-tfstate-632839731153]
-  # None. Reading the database master secret is using the application's
-  # data (decided 2026-10-21). Reading the EventBridge connection's
-  # secret (the issue-writer token) is never needed: rotation uses
-  # update-connection, which writes it.
-  aws_security_secrets: []
+  # The EventBridge connection's secret (the issue-writer GitHub token).
+  # Corrected 2026-10-26: setting a new token with update-connection
+  # makes EventBridge read the old secret on the caller's behalf
+  # (GetSecretValue by substrate-admin, user agent events.amazonaws.com),
+  # which failed ac-6.2 on the first live run after the token was
+  # re-issued. Rotating an integration's credential is a security
+  # function. Reading the database master secret is still using the
+  # application's data (decided 2026-10-21), so it isn't listed.
+  aws_security_secrets: ["events!connection/substrate-self-test-github/f3e1cf22-0f90-4fee-9aaa-aa3045ffcfdc"]
   # GitHub: no repository admin (rookwright-admin, the organization's
   # owner) authors an issue, pull request, comment, review or commit;
   # everyday work is done as kernwill (write). The repository moved to
