@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SUBSTRATE_COMMIT: 44ceaf28a17b54b5042628890b6fb9e32f6277e8
+  SUBSTRATE_COMMIT: 1159c2ae9c39b0464d9f533ed838c9a3d7cc9209
 
 jobs:
   verify:
