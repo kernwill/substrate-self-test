@@ -16,7 +16,7 @@ components:
     org: https://integrator-2677113.okta.com
   # This repository: the offering's infrastructure code and CI.
   - type: github
-    repository: kernwill/substrate-self-test
+    repository: rookwright-test/substrate-self-test
   # Not declared: the Kubernetes manifests in k8s/. They have never been
   # deployed to a cluster, so they are not an information resource of
   # the running offering (removed 2026-10-07). substrate still parses

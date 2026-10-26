@@ -13,7 +13,7 @@
 
 resource "aws_cloudwatch_event_connection" "github" {
   name               = "substrate-self-test-github"
-  description        = "GitHub API, token limited to opening issues in kernwill/substrate-self-test"
+  description        = "GitHub API, token limited to opening issues in rookwright-test/substrate-self-test"
   authorization_type = "API_KEY"
   auth_parameters {
     api_key {
@@ -38,8 +38,8 @@ resource "aws_cloudwatch_event_connection" "github" {
 
 resource "aws_cloudwatch_event_api_destination" "github_issues" {
   name                             = "substrate-self-test-github-issues"
-  description                      = "Open an issue in kernwill/substrate-self-test"
-  invocation_endpoint              = "https://api.github.com/repos/kernwill/substrate-self-test/issues"
+  description                      = "Open an issue in rookwright-test/substrate-self-test"
+  invocation_endpoint              = "https://api.github.com/repos/rookwright-test/substrate-self-test/issues"
   http_method                      = "POST"
   invocation_rate_limit_per_second = 1
   connection_arn                   = aws_cloudwatch_event_connection.github.arn
